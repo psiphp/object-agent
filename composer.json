@@ -1,0 +1,34 @@
+{
+    "name": "psiphp/object-agent",
+    "description": "Object Manager Abstraction",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Leech",
+            "email": "daniel@dantleech.com"
+        }
+    ],
+    "require": {
+        "symfony/event-dispatcher": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Psi\\Component\\ObjectAgent\\": "lib/",
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\PhpcrOdm\\": "bridge/doctrine-phpcr-odm/lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Psi\\Component\\ObjectAgent\\Tests\\": "tests/",
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\PhpcrOdm\\Tests\\": "bridge/doctrine-phpcr-odm/tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
