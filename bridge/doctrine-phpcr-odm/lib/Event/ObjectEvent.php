@@ -2,8 +2,8 @@
 
 namespace Psi\Component\ObjectAgent\Agent\Doctrine\Event;
 
-use Psi\Component\ObjectAgent\Event\AbstractObjectEvent;
 use Doctrine\ODM\PHPCR\DocumentManagerInterface;
+use Psi\Component\ObjectAgent\Event\AbstractObjectEvent;
 
 class ObjectEvent extends AbstractObjectEvent
 {

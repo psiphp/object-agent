@@ -2,8 +2,8 @@
 
 namespace Psi\Component\ObjectAgent\Tests;
 
-use Psi\Component\ObjectAgent\AgentInterface;
 use Psi\Component\ObjectAgent\AgentFinder;
+use Psi\Component\ObjectAgent\AgentInterface;
 
 class AgentFinderTest extends \PHPUnit_Framework_TestCase
 {
