@@ -8,14 +8,12 @@ class QueryTest extends \PHPUnit_Framework_TestCase
 {
     public function testQuery()
     {
-        $query = Query::create(\stdClass::class, $expr = Query::and(
+        $query = Query::create(\stdClass::class, $expr = Query::composite('and',
             Query::comparison('eq', 'foo', 'bar'),
             Query::comparison('gt', 'price', 100),
-            Query::not(
-                Query::or(
-                    Query::comparison('lte', 123, 12),
-                    Query::comparison('eq', 12, 12)
-                )
+            Query::composite('or',
+                Query::comparison('lte', 123, 12),
+                Query::comparison('eq', 12, 12)
             )
         ));
 

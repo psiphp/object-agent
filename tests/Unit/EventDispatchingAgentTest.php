@@ -2,12 +2,12 @@
 
 namespace Psi\Component\ObjectAgent\Tests\Unit;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Psi\Component\ObjectAgent\AgentInterface;
+use Psi\Component\ObjectAgent\Event\ObjectEvent;
 use Psi\Component\ObjectAgent\EventDispatchingAgent;
 use Psi\Component\ObjectAgent\Events;
-use Psi\Component\ObjectAgent\Event\ObjectEvent;
 use Psi\Component\ObjectAgent\Query\Query;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should delegate find
+     * It should delegate find.
      */
     public function testDelegateFind()
     {
@@ -39,7 +39,7 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should delegate delete
+     * It should delegate delete.
      */
     public function testDelegateDelete()
     {
@@ -49,7 +49,7 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should delegate getIdentifier
+     * It should delegate getIdentifier.
      */
     public function testDelegateGetIdentifier()
     {
@@ -60,7 +60,7 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should delegate "supports"
+     * It should delegate "supports".
      */
     public function testDelegateSupports()
     {
@@ -70,7 +70,7 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should delegate setParent
+     * It should delegate setParent.
      */
     public function testDelegateSetParent()
     {
@@ -82,7 +82,7 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should delegate query
+     * It should delegate query.
      */
     public function testDelegateQuery()
     {

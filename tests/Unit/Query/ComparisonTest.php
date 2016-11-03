@@ -25,13 +25,13 @@ class ComparisonTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidComparators()
     {
-        $validComparators = [ 'eq', 'neq', 'gt', 'gte', 'lt', 'lte' ];
+        $validComparators = ['eq', 'neq', 'gt', 'gte', 'lt', 'lte'];
 
         foreach ($validComparators as $comparator) {
             $comparison = new Comparison($comparator, 12, 24);
             $this->assertEquals($comparator, $comparison->getComparator());
-            $this->assertEquals(12, $comparison->getValue1());
-            $this->assertEquals(24, $comparison->getValue2());
+            $this->assertEquals(12, $comparison->getField());
+            $this->assertEquals(24, $comparison->getValue());
         }
     }
 }

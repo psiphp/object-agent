@@ -2,10 +2,9 @@
 
 namespace Psi\Component\ObjectAgent;
 
+use Psi\Component\ObjectAgent\Event\ObjectEvent;
 use Psi\Component\ObjectAgent\Query\Query;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Psi\Component\ObjectAgent\AgentInterface;
-use Psi\Component\ObjectAgent\Event\ObjectEvent;
 
 class EventDispatchingAgent implements AgentInterface
 {
@@ -15,8 +14,7 @@ class EventDispatchingAgent implements AgentInterface
     public function __construct(
         AgentInterface $agent,
         EventDispatcherInterface $dispatcher
-    )
-    {
+    ) {
         $this->agent = $agent;
         $this->dispatcher = $dispatcher;
     }

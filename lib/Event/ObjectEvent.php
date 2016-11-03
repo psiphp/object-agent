@@ -2,8 +2,8 @@
 
 namespace Psi\Component\ObjectAgent\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Psi\Component\ObjectAgent\AgentInterface;
+use Symfony\Component\EventDispatcher\Event;
 
 final class ObjectEvent extends Event
 {

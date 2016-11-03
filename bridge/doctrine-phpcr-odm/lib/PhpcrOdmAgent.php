@@ -1,44 +1,38 @@
 <?php
 
-declare(strict_types=1);t
+declare(strict_types=1);
 
 namespace Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm;
 
-use Psi\Component\ObjectAgent\AgentInterface;
-use Doctrine\ODM\PHPCR\DocumentManagerInterface;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
-use Psi\Component\ObjectAgent\Exception\ObjectNotFound;
-use Psi\Component\ObjectAgent\Agent\Doctrine\Event\PhpcrOdmObjectEvent;
-use Psi\Component\ObjectAgent\Agent\Doctrine\Event\ObjectEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Psi\Component\ObjectAgent\Events;
+use Doctrine\ODM\PHPCR\DocumentManagerInterface;
+use Psi\Component\ObjectAgent\AgentInterface;
+use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
+use Psi\Component\ObjectAgent\Query\Query;
 
 class PhpcrOdmAgent implements AgentInterface
 {
     private $documentManager;
-    private $alias;
-    private $eventDispatcher;
 
     public function __construct(
-        $alias,
-        EventDispatcherInterface $eventDispatcher,
         DocumentManagerInterface $documentManager
-    )
-    {
-        $this->alias = $alias;
+    ) {
         $this->documentManager = $documentManager;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function find($identifier)
+    public function find($identifier, string $class = null)
     {
-        $object = $this->documentManager->find(null, $identifier);
+        $object = $this->documentManager->find($class, $identifier);
 
         if (null === $object) {
-            throw new ObjectNotFound($identifier);
+            throw new ObjectNotFoundException(sprintf(
+                'Could not find document with identifier "%s" (class "%s")',
+                $identifier, null === $class ? '<null>' : $class
+            ));
         }
 
         return $object;
@@ -49,11 +43,16 @@ class PhpcrOdmAgent implements AgentInterface
      */
     public function save($object)
     {
-        $this->eventDispatcher->dispatch(Events::PRE_SAVE, new ObjectEvent(
-            $this->documentManager, $object
-        ));
-
         $this->documentManager->persist($object);
+        $this->documentManager->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function delete($object)
+    {
+        $this->documentManager->remove($object);
         $this->documentManager->flush();
     }
 
@@ -102,19 +101,35 @@ class PhpcrOdmAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
-    public function getAlias()
+    public function supports(string $class): bool
     {
-        return $this->alias;
+        $metadataFactory = $this->documentManager->getMetadataFactory();
+
+        $supports = false;
+        try {
+            $metadataFactory->getMetadataFor(ClassUtils::getRealClass($class));
+            $supports = true;
+        } catch (MappingException $exception) {
+            // no metadata - class is not known to phpcr-odm
+        }
+
+        return $supports;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($class)
+    public function query(Query $query): \Traversable
     {
-        $metadataFactory = $this->documentManager->getMetadataFactory();
-        $supports = $metadataFactory->getMetadataFor(ClassUtils::getRealClass($class));
+        $sourceAlias = 'a';
+        $queryBuilder = $this->documentManager->getRepository($query->getClassFqn())->createQueryBuilder($sourceAlias);
+        $visitor = new ExpressionVisitor(
+            $queryBuilder,
+            $sourceAlias
+        );
 
-        return $supports ? true : false;
+        $visitor->dispatch($query->getExpression());
+
+        return $queryBuilder->getQuery()->execute();
     }
 }

@@ -12,7 +12,10 @@
         "symfony/event-dispatcher": "^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.6"
+        "phpunit/phpunit": "^5.6",
+        "jackalope/jackalope-doctrine-dbal": "^1.2",
+        "doctrine/phpcr-odm": "^1.4",
+        "phpbench/container": "^1.0"
     },
     "autoload": {
         "psr-4": {

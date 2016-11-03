@@ -13,6 +13,8 @@ class Comparison implements Expression
     const LESS_THAN = 'lt';
     const LESS_THAN_EQUAL = 'lte';
 
+    // TODO: Contains (like), NULL, NOT NULL, IN
+
     private static $validTypes = [
         self::EQUALS,
         self::NOT_EQUALS,
@@ -23,10 +25,10 @@ class Comparison implements Expression
     ];
 
     private $comparator;
-    private $value1;
-    private $value2;
+    private $field;
+    private $value;
 
-    public function __construct(string $comparator, $value1, $value2)
+    public function __construct(string $comparator, $field, $value)
     {
         if (!in_array($comparator, self::$validTypes)) {
             throw new \InvalidArgumentException(sprintf(
@@ -37,8 +39,8 @@ class Comparison implements Expression
         }
 
         $this->comparator = $comparator;
-        $this->value1 = $value1;
-        $this->value2 = $value2;
+        $this->field = $field;
+        $this->value = $value;
     }
 
     public function getComparator()
@@ -46,13 +48,13 @@ class Comparison implements Expression
         return $this->comparator;
     }
 
-    public function getValue1()
+    public function getField()
     {
-        return $this->value1;
+        return $this->field;
     }
 
-    public function getValue2()
+    public function getValue()
     {
-        return $this->value2;
+        return $this->value;
     }
 }

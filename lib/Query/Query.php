@@ -9,7 +9,7 @@ namespace Psi\Component\ObjectAgent\Query;
  *           Query::comparison('eq', 'foo', 'bar'),
  *           Query::comparison('gt', 10, 5),
  *       )
- *   );
+ *   );.
  */
 final class Query
 {
@@ -44,18 +44,8 @@ final class Query
         return new Comparison($comparator, $value1, $value2);
     }
 
-    public static function and(...$expressions): Conjunction
+    public static function composite($type, ...$expressions): Composite
     {
-        return new Conjunction($expressions);
-    }
-
-    public static function or(...$expressions): Disjunction
-    {
-        return new Disjunction($expressions);
-    }
-
-    public static function not(Expression $expression)
-    {
-        return new Negation($expression);
+        return new Composite($type, $expressions);
     }
 }
