@@ -5,6 +5,8 @@ namespace Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional;
 use Doctrine\ODM\PHPCR\Query\Builder\AbstractNode;
 use Doctrine\ODM\PHPCR\Query\Builder\ConstraintAndx;
 use Doctrine\ODM\PHPCR\Query\Builder\ConstraintComparison;
+use Doctrine\ODM\PHPCR\Query\Builder\ConstraintFieldIsset;
+use Doctrine\ODM\PHPCR\Query\Builder\ConstraintNot;
 use Doctrine\ODM\PHPCR\Query\Builder\ConstraintOrx;
 use Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\ExpressionVisitor;
 use Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional\Model\Page;
@@ -63,6 +65,80 @@ class ExpressionVisitorTest extends PhpcrOdmTestCase
             [
                 'lt',
                 'jcr.operator.less.than',
+            ],
+            [
+                'contains',
+                'jcr.operator.like',
+            ],
+        ];
+    }
+
+    /**
+     * It should visit complex comparators.
+     *
+     * @dataProvider provideComplexComparator
+     */
+    public function testComplexComparator(string $type, $value, \Closure $assertion)
+    {
+        $this->visitor->dispatch(Query::comparison($type, 'title', $value));
+        $query = $this->queryBuilder;
+        $children = $query->getChildrenOfType(AbstractNode::NT_WHERE);
+        $children = $children[0]->getChildrenOfType(AbstractNode::NT_CONSTRAINT);
+        $assertion($children);
+    }
+
+    public function provideComplexComparator()
+    {
+        return [
+            [
+                'in',
+                [10, 20, 30],
+                function ($nodes) {
+                    $this->assertInstanceOf(ConstraintOrx::class, $nodes[0]);
+                    $nodes = $nodes[0]->getChildrenOfType(AbstractNode::NT_CONSTRAINT);
+                    $this->assertInstanceOf(ConstraintComparison::class, $nodes[0]);
+                    $this->assertInstanceOf(ConstraintComparison::class, $nodes[1]);
+                    $this->assertInstanceOf(ConstraintComparison::class, $nodes[2]);
+                    $nodes = $nodes[0]->getChildrenOfType(AbstractNode::NT_OPERAND_STATIC);
+                    $this->assertEquals(10, $nodes[0]->getValue());
+                },
+            ],
+            [
+                'nin',
+                [10, 20, 30],
+                function ($nodes) {
+                    $this->assertInstanceOf(ConstraintNot::class, $nodes[0]);
+                    $nodes = $nodes[0]->getChildrenOfType(AbstractNode::NT_CONSTRAINT);
+                    $this->assertInstanceOf(ConstraintOrx::class, $nodes[0]);
+                    $nodes = $nodes[0]->getChildrenOfType(AbstractNode::NT_CONSTRAINT);
+                    $this->assertInstanceOf(ConstraintComparison::class, $nodes[1]);
+                    $this->assertInstanceOf(ConstraintComparison::class, $nodes[2]);
+                },
+            ],
+            [
+                'not_contains',
+                'hello',
+                function ($nodes) {
+                    $this->assertInstanceOf(ConstraintNot::class, $nodes[0]);
+                    $nodes = $nodes[0]->getChildrenOfType(AbstractNode::NT_CONSTRAINT);
+                    $this->assertEquals('jcr.operator.like', $nodes[0]->getOperator());
+                },
+            ],
+            [
+                'null',
+                null,
+                function ($nodes) {
+                    $this->assertInstanceOf(ConstraintNot::class, $nodes[0]);
+                    $nodes = $nodes[0]->getChildrenOfType(AbstractNode::NT_CONSTRAINT);
+                    $this->assertInstanceOf(ConstraintFieldIsset::class, $nodes[0]);
+                },
+            ],
+            [
+                'not_null',
+                null,
+                function ($nodes) {
+                    $this->assertInstanceOf(ConstraintFieldIsset::class, $nodes[0]);
+                },
             ],
         ];
     }
