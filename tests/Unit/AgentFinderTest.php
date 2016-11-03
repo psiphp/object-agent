@@ -34,7 +34,7 @@ class AgentFinderTest extends \PHPUnit_Framework_TestCase
     /**
      * It should throw an exception if no agents support the given class.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException Psi\Component\ObjectAgent\Exception\AgentNotFoundException
      * @expectedExceptionMessage Could not find an agent supporting class "stdClass".
      */
     public function testFindAgentNotFound()

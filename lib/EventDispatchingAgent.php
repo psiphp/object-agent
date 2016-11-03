@@ -2,15 +2,23 @@
 
 namespace Psi\Component\ObjectAgent;
 
+use Psi\Component\ObjectAgent\Query\Query;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psi\Component\ObjectAgent\AgentInterface;
+use Psi\Component\ObjectAgent\Event\ObjectEvent;
+
 class EventDispatchingAgent implements AgentInterface
 {
     private $dispatcher;
+    private $agent;
 
-    public function __construct(AgentInterface $agent, EventDispatcherInterface $dispatcher)
+    public function __construct(
+        AgentInterface $agent,
+        EventDispatcherInterface $dispatcher
+    )
     {
-        throw new \BadMethodCallException('Implement the event dispatcher');
-
         $this->agent = $agent;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -26,7 +34,27 @@ class EventDispatchingAgent implements AgentInterface
      */
     public function save($object)
     {
-        return $this->agent->save($object);
+        $this->dispatch(Events::PRE_SAVE, $object);
+        $this->agent->save($object);
+        $this->dispatch(Events::POST_SAVE, $object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function query(Query $query): \Traversable
+    {
+        return $this->agent->query($query);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function delete($object)
+    {
+        $this->dispatch(Events::PRE_DELETE, $object);
+        $this->agent->delete($object);
+        $this->dispatch(Events::POST_DELETE, $object);
     }
 
     /**
@@ -42,7 +70,7 @@ class EventDispatchingAgent implements AgentInterface
      */
     public function supports(string $class): bool
     {
-        return $this->agent->supports($object);
+        return $this->agent->supports($class);
     }
 
     /**
@@ -50,14 +78,11 @@ class EventDispatchingAgent implements AgentInterface
      */
     public function setParent($object, $parent)
     {
-        return $this->agent->setParent($object);
+        return $this->agent->setParent($object, $parent);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAlias()
+    private function dispatch(string $eventName, $object)
     {
-        return $this->agent->getAlias($object);
+        $this->dispatcher->dispatch($eventName, new ObjectEvent($this->agent, $object));
     }
 }

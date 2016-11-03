@@ -9,14 +9,26 @@ use Psi\Component\ObjectAgent\Query\Query;
 interface AgentInterface
 {
     /**
-     * Find an object by its identifier.
+     * Return true if this agent can handle the given object class identifier.
+     *
+     * @param string $class
+     *
+     * @return bool
+     */
+    public function supports(string $class): bool;
+
+    /**
+     * Find an object by its identifier and optionally
+     * a class identifier.
      *
      * @param int|string $identifier
-     * @throws ObjectNotFound
+     * @param string
+     *
+     * @throws Exception\ObjectNotFoundException
      *
      * @return object
      */
-    public function find($identifier);
+    public function find($identifier, string $class = null);
 
     /**
      * Save the given object and flush the storage.
@@ -24,6 +36,13 @@ interface AgentInterface
      * @param object $object
      */
     public function save($object);
+
+    /**
+     * Remove the given object and flush the storage.
+     *
+     * @param object $object
+     */
+    public function delete($object);
 
     /**
      * Perform a query and return a collection of objects.
@@ -38,22 +57,6 @@ interface AgentInterface
      * @return int|string
      */
     public function getIdentifier($object);
-
-    /**
-     * Return true if this agent can handle the given object class.
-     *
-     * @param string $class
-     *
-     * @return bool
-     */
-    public function supports(string $class): bool;
-
-    /**
-     * Return the url-safe alias to use for this agent.
-     *
-     * @return string
-     */
-    public function getAlias();
 
     /**
      * Set the parent object on a given object.

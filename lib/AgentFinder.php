@@ -10,13 +10,15 @@ class AgentFinder
 
     public function __construct(array $agents)
     {
+        array_map(function (AgentInterface $agent) {
+        }, $agents);
         $this->agents = $agents;
     }
 
-    public function findAgentFor($class)
+    public function findAgentFor(string $classFqn)
     {
         foreach ($this->agents as $agent) {
-            if ($agent->supports($class)) {
+            if ($agent->supports($classFqn)) {
                 return $agent;
             }
         }
@@ -25,21 +27,9 @@ class AgentFinder
             return get_class($element);
         }, $this->agents);
 
-        throw new \InvalidArgumentException(sprintf(
+        throw new Exception\AgentNotFoundException(sprintf(
             'Could not find an agent supporting class "%s". Registered agents: "%s"',
-            $class, implode('", "', $classes)
+            $classFqn, implode('", "', $classes)
         ));
-    }
-
-    public function getAgent($alias)
-    {
-        if (!isset($this->agents[$alias])) {
-            throw new \InvalidArgumentException(sprintf(
-                'Agent "%s" has not been registered, known agents: "%s"',
-                $alias, implode('", "', array_keys($this->agents))
-            ));
-        }
-
-        return $this->agents[$alias];
     }
 }
