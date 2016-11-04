@@ -132,4 +132,12 @@ class PhpcrOdmAgent implements AgentInterface
 
         return $queryBuilder->getQuery()->execute();
     }
+
+    /**
+     * Return the document mangaer instance (for use in events).
+     */
+    public function getDocumentManager(): DocumentManagerInterface
+    {
+        return $this->documentManager;
+    }
 }

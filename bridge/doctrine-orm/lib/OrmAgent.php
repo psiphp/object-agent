@@ -131,4 +131,12 @@ class OrmAgent implements AgentInterface
             $queryBuilder->getQuery()->execute()
         );
     }
+
+    /**
+     * Return the entity manager instance (for use in events).
+     */
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return $this->entityManager;
+    }
 }
