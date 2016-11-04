@@ -67,6 +67,7 @@ class PhpcrOdmExtension implements ExtensionInterface
                 __DIR__ . '/../../../vendor/doctrine/phpcr-odm/lib/Doctrine/ODM/PHPCR/Document',
             ]);
             $chain = new MappingDriverChain();
+            $chain->addDriver($xmlDriver, 'Psi\Component\ObjectAgent\Tests\Functional\Model');
             $chain->addDriver($xmlDriver, 'Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional\Model');
             $chain->addDriver($annotationDriver, 'Doctrine');
 

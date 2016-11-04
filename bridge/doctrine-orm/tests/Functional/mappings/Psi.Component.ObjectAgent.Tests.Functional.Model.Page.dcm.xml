@@ -6,12 +6,11 @@
     https://github.com/doctrine/phpcr-odm/raw/master/doctrine-phpcr-odm-mapping.xsd"
     >
 
-    <document 
-        name="Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional\Model\Page"
-        referenceable="true"
+    <entity
+        name="Psi\Component\ObjectAgent\Tests\Functional\Model\Page"
         >
-        <uuid name="uuid" />
-        <field type="string" name="title" nullable="true" />
-    </document>
+        <id name="id" />
+        <field name="title" type="string" nullable="true"/>
+    </entity>
 
 </doctrine-mapping>

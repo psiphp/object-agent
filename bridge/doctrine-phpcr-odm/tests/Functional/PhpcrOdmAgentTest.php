@@ -3,9 +3,9 @@
 namespace Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional;
 
 use Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional\Model\Article;
-use Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional\Model\Page;
 use Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional\Model\PageNoUuid;
 use Psi\Component\ObjectAgent\Query\Query;
+use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
 
 class PhpcrOdmAgentTest extends PhpcrOdmTestCase
 {
@@ -134,17 +134,21 @@ class PhpcrOdmAgentTest extends PhpcrOdmTestCase
 
     public function testQuery()
     {
+        $this->createPage('Hello');
+        $this->createPage('Foobar', '/test/barbar');
         $query = Query::create(Page::class, Query::composite(
             'and',
             Query::comparison('eq', 'title', 'Hello')
         ));
-        $this->agent->query($query);
+        $results = $this->agent->query($query);
+        $this->assertCount(1, $results);
     }
 
-    private function createPage()
+    private function createPage($title = 'Hello World', $id = '/test/foobar')
     {
         $page = new Page();
-        $page->path = '/test/foobar';
+        $page->title = $title;
+        $page->path = $id;
         $this->documentManager->persist($page);
         $this->documentManager->flush();
 
