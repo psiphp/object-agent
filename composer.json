@@ -15,18 +15,21 @@
         "phpunit/phpunit": "^5.6",
         "jackalope/jackalope-doctrine-dbal": "^1.2",
         "doctrine/phpcr-odm": "^1.4",
-        "phpbench/container": "^1.0"
+        "phpbench/container": "^1.0",
+        "doctrine/orm": "^2.5"
     },
     "autoload": {
         "psr-4": {
             "Psi\\Component\\ObjectAgent\\": "lib/",
-            "Psi\\Bridge\\ObjectAgent\\Doctrine\\PhpcrOdm\\": "bridge/doctrine-phpcr-odm/lib/"
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\PhpcrOdm\\": "bridge/doctrine-phpcr-odm/lib/",
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\Orm\\": "bridge/doctrine-orm/lib/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Psi\\Component\\ObjectAgent\\Tests\\": "tests/",
-            "Psi\\Bridge\\ObjectAgent\\Doctrine\\PhpcrOdm\\Tests\\": "bridge/doctrine-phpcr-odm/tests/"
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\PhpcrOdm\\Tests\\": "bridge/doctrine-phpcr-odm/tests/",
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\Orm\\Tests\\": "bridge/doctrine-orm/tests/"
         }
     },
     "extra": {

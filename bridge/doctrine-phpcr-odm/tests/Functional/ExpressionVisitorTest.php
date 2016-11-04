@@ -9,8 +9,8 @@ use Doctrine\ODM\PHPCR\Query\Builder\ConstraintFieldIsset;
 use Doctrine\ODM\PHPCR\Query\Builder\ConstraintNot;
 use Doctrine\ODM\PHPCR\Query\Builder\ConstraintOrx;
 use Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\ExpressionVisitor;
-use Psi\Bridge\ObjectAgent\Doctrine\PhpcrOdm\Tests\Functional\Model\Page;
 use Psi\Component\ObjectAgent\Query\Query;
+use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
 
 class ExpressionVisitorTest extends PhpcrOdmTestCase
 {
