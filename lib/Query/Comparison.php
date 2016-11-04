@@ -12,8 +12,12 @@ class Comparison implements Expression
     const GREATER_THAN_EQUAL = 'gte';
     const LESS_THAN = 'lt';
     const LESS_THAN_EQUAL = 'lte';
-
-    // TODO: Contains (like), NULL, NOT NULL, IN
+    const NULL = 'null';
+    const NOT_NULL = 'not_null';
+    const IN = 'in';
+    const NOT_IN = 'nin';
+    const CONTAINS = 'contains';
+    const NOT_CONTAINS = 'not_contains';
 
     private static $validTypes = [
         self::EQUALS,
@@ -22,6 +26,12 @@ class Comparison implements Expression
         self::GREATER_THAN_EQUAL,
         self::LESS_THAN,
         self::LESS_THAN_EQUAL,
+        self::NULL,
+        self::NOT_NULL,
+        self::IN,
+        self::NOT_IN,
+        self::CONTAINS,
+        self::NOT_CONTAINS,
     ];
 
     private $comparator;

@@ -75,6 +75,27 @@ class ExpressionVisitor
 
             case Comparison::GREATER_THAN_EQUAL:
                 return $parentNode->gte()->field($this->getField($field))->literal($value)->end();
+
+            case Comparison::IN:
+                return $this->getInConstraint($parentNode, $field, $value);
+
+            case Comparison::NOT_IN:
+                $node = $parentNode->not();
+                $this->getInConstraint($node, $field, $value);
+
+                return $node->end();
+
+            case Comparison::CONTAINS:
+                return $parentNode->like()->field($this->getField($field))->literal($value)->end();
+
+            case Comparison::NOT_CONTAINS:
+                return $parentNode->not()->like()->field($this->getField($field))->literal($value)->end()->end();
+
+            case Comparison::NULL:
+                return $parentNode->not()->fieldIsset($this->getField($field))->end();
+
+            case Comparison::NOT_NULL:
+                return $parentNode->fieldIsset($this->getField($field));
         }
 
         throw new \RuntimeException('Unknown comparator: ' . $comparison->getComparator());
@@ -112,5 +133,21 @@ class ExpressionVisitor
     private function getField($field): string
     {
         return $this->sourceAlias . '.' . $field;
+    }
+
+    /**
+     * @param AbstractNode $parentNode
+     * @param string $field
+     * @param array $values
+     */
+    private function getInConstraint(AbstractNode $parentNode, $field, array $values)
+    {
+        $orNode = $parentNode->orx();
+
+        foreach ($values as $value) {
+            $orNode->eq()->field($this->getField($field))->literal($value);
+        }
+
+        $orNode->end();
     }
 }
