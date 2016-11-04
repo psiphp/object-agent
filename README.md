@@ -6,7 +6,7 @@
 [![Scrutinizer Code
 Quality](https://scrutinizer-ci.com/g/psiphp/object-agent/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/psiphp/object-agent/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/psiphp/object-agent/version.png?format=plastic)](https://packagist.org/packages/psiphp/object-agent)
-[![Total Downloads](https://poser.pugx.org/psiphp/content-type/d/total.png?format=plastic)](https://packagist.org/packages/psiphp/object-agent)
+[![Total Downloads](https://poser.pugx.org/psiphp/object-agent/d/total.png?format=plastic)](https://packagist.org/packages/psiphp/object-agent)
 
 
 This component is part of the Psi Content Management Framework
