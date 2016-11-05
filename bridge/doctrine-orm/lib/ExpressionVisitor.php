@@ -3,15 +3,10 @@
 namespace Psi\Bridge\ObjectAgent\Doctrine\Orm;
 
 use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\QueryBuilder;
 use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Composite;
 use Psi\Component\ObjectAgent\Query\Expression;
 
-/**
- * Walks a Doctrine\Commons\Expr object graph and builds up a PHPCR-ODM
- * query using the (fluent) PHPCR-ODM query builder.
- */
 class ExpressionVisitor
 {
     private $expressionFactory;
@@ -19,9 +14,6 @@ class ExpressionVisitor
 
     private $parameters = [];
 
-    /**
-     * @param QueryBuilder $expressionFactory
-     */
     public function __construct(Expr $expressionFactory, string $sourceAlias)
     {
         $this->expressionFactory = $expressionFactory;
@@ -29,10 +21,7 @@ class ExpressionVisitor
     }
 
     /**
-     * Walk the given expression to build up the PHPCR-ODM query builder.
-     *
-     * @param Expression $expr
-     * @param AbstractNode|null $parentNode
+     * Walk the given expression to build up the ORM query builder.
      */
     public function dispatch(Expression $expr)
     {
@@ -53,9 +42,6 @@ class ExpressionVisitor
         return $this->parameters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function walkComparison(Comparison $comparison)
     {
         $field = $comparison->getField();
@@ -102,9 +88,6 @@ class ExpressionVisitor
         throw new \RuntimeException('Unknown comparator: ' . $comparison->getComparator());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function walkComposite(Composite $expression)
     {
         $expressions = $expression->getExpressions();
@@ -119,30 +102,9 @@ class ExpressionVisitor
         return call_user_func_array([$this->expressionFactory, $method], $ormExpressions);
     }
 
-    /**
-     * @param string $field
-     *
-     * @return string
-     */
     private function getField($field): string
     {
         return $this->sourceAlias . '.' . $field;
-    }
-
-    /**
-     * @param AbstractNode $parentNode
-     * @param string $field
-     * @param array $values
-     */
-    private function getInConstraint(AbstractNode $parentNode, $field, array $values)
-    {
-        $orNode = $parentNode->orx();
-
-        foreach ($values as $value) {
-            $orNode->eq()->field($this->getField($field))->literal($value);
-        }
-
-        $orNode->end();
     }
 
     private function registerParameter(string $name, $value)

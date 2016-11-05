@@ -8,10 +8,6 @@ use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Composite;
 use Psi\Component\ObjectAgent\Query\Expression;
 
-/**
- * Walks a Doctrine\Commons\Expr object graph and builds up a PHPCR-ODM
- * query using the (fluent) PHPCR-ODM query builder.
- */
 class ExpressionVisitor
 {
     private $queryBuilder;

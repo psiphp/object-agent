@@ -105,7 +105,7 @@ class OrmAgent implements AgentInterface
             $metadataFactory->getMetadataFor(ClassUtils::getRealClass($class));
             $supports = true;
         } catch (MappingException $exception) {
-            // no metadata - class is not known to phpcr-odm
+            // no metadata - class is not known to the ORM
         }
 
         return $supports;
