@@ -10,9 +10,14 @@
         <testsuite name="Object Agent">
             <directory>./tests</directory>
         </testsuite>
-        <testsuite name="Doctrine PHPCR-ODM Bridge">
+        <testsuite name="Doctrine PHPCR-ODM bridge">
             <directory>./bridge/doctrine-phpcr-odm/tests</directory>
+        </testsuite>
+        <testsuite name="Doctrine ORM bridge">
             <directory>./bridge/doctrine-orm/tests</directory>
+        </testsuite>
+        <testsuite name="Doctrine Collections bridge">
+            <directory>./bridge/doctrine-collections/tests</directory>
         </testsuite>
     </testsuites>
 

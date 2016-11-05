@@ -50,4 +50,21 @@ Events
 
 TODO
 
+Bridges
+-------
+
+Doctrine ORM
+~~~~~~~~~~~~
+
+...
+
+Doctrine PHPCR-ODM
+~~~~~~~~~~~~~~~~~~
+
+...
+
+Doctrine Collections
+~~~~~~~~~~~~~~~~~~~~
+
+...
 

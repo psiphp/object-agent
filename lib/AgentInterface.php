@@ -18,13 +18,19 @@ interface AgentInterface
     public function supports(string $class): bool;
 
     /**
-     * Find an object by its identifier and optionally
-     * a class identifier.
+     * Find an object by its identifier and optionally a class identifier.
+     *
+     * If the object is not found an ObjectNotFoundException MUST be thrown.
+     *
+     * If the underlying storage layer requires the class argument then a
+     * BadMethodCallException MUST be thrown in the case that the user does not
+     * provide it.
      *
      * @param int|string $identifier
      * @param string
      *
      * @throws Exception\ObjectNotFoundException
+     * @throws Psi\Component\ObjectAgent\Exception\BadMethodCallException
      *
      * @return object
      */
@@ -61,8 +67,14 @@ interface AgentInterface
     /**
      * Set the parent object on a given object.
      *
+     * If the agent does not represent a hierarchical storage layer, then a
+     * BadMethodCallException MUST be thrown.
+     *
+     *
      * @param object $object
      * @param object $parent
+     *
+     * @throws Psi\Component\ObjectAgent\Exception\BadMethodCallException
      */
     public function setParent($object, $parent);
 }

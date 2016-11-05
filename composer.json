@@ -22,15 +22,22 @@
         "psr-4": {
             "Psi\\Component\\ObjectAgent\\": "lib/",
             "Psi\\Bridge\\ObjectAgent\\Doctrine\\PhpcrOdm\\": "bridge/doctrine-phpcr-odm/lib/",
-            "Psi\\Bridge\\ObjectAgent\\Doctrine\\Orm\\": "bridge/doctrine-orm/lib/"
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\Orm\\": "bridge/doctrine-orm/lib/",
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\Collections\\": "bridge/doctrine-collections/lib/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Psi\\Component\\ObjectAgent\\Tests\\": "tests/",
             "Psi\\Bridge\\ObjectAgent\\Doctrine\\PhpcrOdm\\Tests\\": "bridge/doctrine-phpcr-odm/tests/",
-            "Psi\\Bridge\\ObjectAgent\\Doctrine\\Orm\\Tests\\": "bridge/doctrine-orm/tests/"
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\Orm\\Tests\\": "bridge/doctrine-orm/tests/",
+            "Psi\\Bridge\\ObjectAgent\\Doctrine\\Collections\\Tests\\": "bridge/doctrine-collections/tests/"
         }
+    },
+    "suggests": {
+        "doctrine/phpcr-odm": "In order to integrate with the Doctrine PHPCR-ODM",
+        "doctrine/orm": "In order to integrate with the Doctrine ORM",
+        "doctrine/collections": "In order to provide in-memory agents"
     },
     "extra": {
         "branch-alias": {
