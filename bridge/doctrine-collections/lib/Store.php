@@ -69,7 +69,7 @@ final class Store
     public function getOrCreateCollection($classFqn): ArrayCollection
     {
         if (!$this->hasCollection($classFqn)) {
-            $this->setCollection($classFqn, new ArrayCollection());
+            $this->collections[$classFqn] = new ArrayCollection();
         }
 
         return $this->getCollection($classFqn);

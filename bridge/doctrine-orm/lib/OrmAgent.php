@@ -37,10 +37,7 @@ class OrmAgent implements AgentInterface
         $object = $this->entityManager->find($class, $identifier);
 
         if (null === $object) {
-            throw new ObjectNotFoundException(sprintf(
-                'Could not find entity with identifier "%s" (class "%s")',
-                $identifier, null === $class ? '<null>' : $class
-            ));
+            throw ObjectNotFoundException::forClassAndIdentifier($class, $identifier);
         }
 
         return $object;
@@ -123,9 +120,23 @@ class OrmAgent implements AgentInterface
             $sourceAlias
         );
 
-        $expr = $visitor->dispatch($query->getExpression());
-        $queryBuilder->where($expr);
-        $queryBuilder->setParameters($visitor->getParameters());
+        if ($query->hasExpression()) {
+            $expr = $visitor->dispatch($query->getExpression());
+            $queryBuilder->where($expr);
+            $queryBuilder->setParameters($visitor->getParameters());
+        }
+
+        foreach ($query->getOrderings() as $field => $order) {
+            $queryBuilder->addOrderBy($sourceAlias . '.' . $field, $order);
+        }
+
+        if (null !== $query->getFirstResult()) {
+            $queryBuilder->setFirstResult($query->getFirstResult());
+        }
+
+        if (null !== $query->getMaxResults()) {
+            $queryBuilder->setMaxResults($query->getMaxResults());
+        }
 
         return new ArrayCollection(
             $queryBuilder->getQuery()->execute()
