@@ -29,10 +29,7 @@ class PhpcrOdmAgent implements AgentInterface
         $object = $this->documentManager->find($class, $identifier);
 
         if (null === $object) {
-            throw new ObjectNotFoundException(sprintf(
-                'Could not find document with identifier "%s" (class "%s")',
-                $identifier, null === $class ? '<null>' : $class
-            ));
+            throw ObjectNotFoundException::forClassAndIdentifier($class, $identifier);
         }
 
         return $object;
@@ -123,12 +120,29 @@ class PhpcrOdmAgent implements AgentInterface
     {
         $sourceAlias = 'a';
         $queryBuilder = $this->documentManager->getRepository($query->getClassFqn())->createQueryBuilder($sourceAlias);
-        $visitor = new ExpressionVisitor(
-            $queryBuilder,
-            $sourceAlias
-        );
 
-        $visitor->dispatch($query->getExpression());
+        if ($query->hasExpression()) {
+            $visitor = new ExpressionVisitor(
+                $queryBuilder,
+                $sourceAlias
+            );
+
+            $visitor->dispatch($query->getExpression());
+        }
+
+        $orderBy = $queryBuilder->orderBy();
+        foreach ($query->getOrderings() as $field => $order) {
+            $order = strtolower($order);
+            $orderBy->{$order}()->field($sourceAlias . '.' .  $field);
+        }
+
+        if (null !== $query->getFirstResult()) {
+            $queryBuilder->setFirstResult($query->getFirstResult());
+        }
+
+        if (null !== $query->getMaxResults()) {
+            $queryBuilder->setMaxResults($query->getMaxResults());
+        }
 
         return $queryBuilder->getQuery()->execute();
     }

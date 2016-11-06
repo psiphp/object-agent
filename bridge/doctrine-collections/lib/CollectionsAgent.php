@@ -39,10 +39,7 @@ class CollectionsAgent implements AgentInterface
         $object = $this->store->find($classFqn, $identifier);
 
         if (null === $object) {
-            throw new ObjectNotFoundException(sprintf(
-                'Could not find object of class "%s" with identifier "%s"',
-                $classFqn, $identifier
-            ));
+            throw ObjectNotFoundException::forClassAndIdentifier($classFqn, $identifier);
         }
 
         return $object;
@@ -70,10 +67,20 @@ class CollectionsAgent implements AgentInterface
     public function query(Query $query): \Traversable
     {
         $collection = $this->store->getCollection($query->getClassFqn());
-        $expressionBuilder = Criteria::expr();
-        $visitor = new CollectionsVisitor($expressionBuilder);
-        $doctrineExpression = $visitor->dispatch($query->getExpression());
-        $criteria = new Criteria($doctrineExpression);
+
+        $doctrineExpression = null;
+        if ($query->hasExpression()) {
+            $expressionBuilder = Criteria::expr();
+            $visitor = new CollectionsVisitor($expressionBuilder);
+            $doctrineExpression = $visitor->dispatch($query->getExpression());
+        }
+
+        $criteria = new Criteria(
+            $doctrineExpression,
+            $query->getOrderings(),
+            $query->getFirstResult(),
+            $query->getMaxResults()
+        );
 
         return $collection->matching($criteria);
     }
