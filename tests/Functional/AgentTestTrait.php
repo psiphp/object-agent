@@ -2,12 +2,22 @@
 
 namespace Psi\Component\ObjectAgent\Tests\Functional;
 
+use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Query;
 use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
 
 trait AgentTestTrait
 {
+    /**
+     * It should return its capabilities.
+     */
+    public function testCapabilities()
+    {
+        $capabilities = $this->agent->getCapabilities();
+        $this->assertInstanceOf(Capabilities::class, $capabilities);
+    }
+
     /**
      * It should find a object.
      */

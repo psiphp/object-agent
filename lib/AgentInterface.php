@@ -17,6 +17,8 @@ interface AgentInterface
      */
     public function supports(string $class): bool;
 
+    public function getCapabilities(): Capabilities;
+
     /**
      * Find an object by its identifier and optionally a class identifier.
      *

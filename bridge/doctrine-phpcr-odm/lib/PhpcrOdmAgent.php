@@ -8,7 +8,9 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ODM\PHPCR\DocumentManagerInterface;
 use Psi\Component\ObjectAgent\AgentInterface;
+use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
+use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Query;
 
 class PhpcrOdmAgent implements AgentInterface
@@ -33,6 +35,30 @@ class PhpcrOdmAgent implements AgentInterface
         }
 
         return $object;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCapabilities(): Capabilities
+    {
+        return Capabilities::create([
+            'can_set_parent' => true,
+            'supported_comparators' => [
+                Comparison::EQUALS,
+                Comparison::NOT_EQUALS,
+                Comparison::LESS_THAN,
+                Comparison::LESS_THAN_EQUAL,
+                Comparison::GREATER_THAN,
+                Comparison::GREATER_THAN_EQUAL,
+                Comparison::IN,
+                Comparison::NOT_IN,
+                Comparison::CONTAINS,
+                Comparison::NOT_CONTAINS,
+                Comparison::NULL,
+                Comparison::NOT_NULL,
+            ],
+        ]);
     }
 
     /**

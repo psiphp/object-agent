@@ -6,8 +6,10 @@ namespace Psi\Bridge\ObjectAgent\Doctrine\Collections;
 
 use Doctrine\Common\Collections\Criteria;
 use Psi\Component\ObjectAgent\AgentInterface;
+use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
+use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Query;
 
 class CollectionsAgent implements AgentInterface
@@ -25,6 +27,28 @@ class CollectionsAgent implements AgentInterface
     public function supports(string $classFqn): bool
     {
         return $this->store->hasCollection($classFqn);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCapabilities(): Capabilities
+    {
+        return Capabilities::create([
+            'can_set_parent' => false,
+            'supported_comparators' => [
+                Comparison::EQUALS,
+                Comparison::NOT_EQUALS,
+                Comparison::LESS_THAN,
+                Comparison::LESS_THAN_EQUAL,
+                Comparison::GREATER_THAN,
+                Comparison::GREATER_THAN_EQUAL,
+                Comparison::IN,
+                Comparison::NOT_IN,
+                Comparison::CONTAINS,
+                Comparison::NULL,
+            ],
+        ]);
     }
 
     /**

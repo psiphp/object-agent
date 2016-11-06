@@ -22,6 +22,14 @@ class EventDispatchingAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
+    public function getCapabilities(): Capabilities
+    {
+        return $this->agent->getCapabilities();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function find($identifier, string $class = null)
     {
         return $this->agent->find($identifier, $class);
