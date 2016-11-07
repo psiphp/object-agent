@@ -3,6 +3,7 @@
 namespace Psi\Component\ObjectAgent\Tests\Unit;
 
 use Psi\Component\ObjectAgent\AgentInterface;
+use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Event\ObjectEvent;
 use Psi\Component\ObjectAgent\EventDispatchingAgent;
 use Psi\Component\ObjectAgent\Events;
@@ -22,6 +23,16 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
             $this->innerAgent->reveal(),
             $this->dispatcher->reveal()
         );
+    }
+
+    /**
+     * It should return the inner agent's capabilities.
+     */
+    public function testDelegateCapabilities()
+    {
+        $this->innerAgent->getCapabilities()->willReturn(Capabilities::create([]));
+
+        return $this->agent->getCapabilities();
     }
 
     /**

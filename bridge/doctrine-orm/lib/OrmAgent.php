@@ -9,7 +9,9 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Psi\Component\ObjectAgent\AgentInterface;
+use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
+use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Query;
 
 class OrmAgent implements AgentInterface
@@ -20,6 +22,30 @@ class OrmAgent implements AgentInterface
         EntityManagerInterface $entityManager
     ) {
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCapabilities(): Capabilities
+    {
+        return Capabilities::create([
+            'can_set_parent' => false,
+            'supported_comparators' => [
+                Comparison::EQUALS,
+                Comparison::NOT_EQUALS,
+                Comparison::LESS_THAN,
+                Comparison::LESS_THAN_EQUAL,
+                Comparison::GREATER_THAN,
+                Comparison::GREATER_THAN_EQUAL,
+                Comparison::IN,
+                Comparison::NOT_IN,
+                Comparison::CONTAINS,
+                Comparison::NOT_CONTAINS,
+                Comparison::NULL,
+                Comparison::NOT_NULL,
+            ],
+        ]);
     }
 
     /**
