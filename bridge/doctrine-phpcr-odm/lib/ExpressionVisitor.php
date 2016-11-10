@@ -105,6 +105,11 @@ class ExpressionVisitor
         $node = $expression->getType() === Composite::AND ? $parentNode->andX() : $parentNode->orX();
 
         $expressions = $expression->getExpressions();
+
+        if (empty($expressions)) {
+            return $node;
+        }
+
         $leftExpression = array_shift($expressions);
         $this->dispatch($leftExpression, $node);
 

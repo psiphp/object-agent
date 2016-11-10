@@ -144,6 +144,21 @@ class ExpressionVisitorTest extends PhpcrOdmTestCase
     }
 
     /**
+     * It should process "empty" composites.
+     */
+    public function testVisitEmptyComposite()
+    {
+        $this->visitor->dispatch(
+            Query::composite('and')
+        );
+
+        $query = $this->queryBuilder;
+        $children = $query->getChildrenOfType(AbstractNode::NT_WHERE);
+        $children = $children[0]->getChildrenOfType(AbstractNode::NT_CONSTRAINT);
+        $this->assertInstanceOf(ConstraintAndx::class, $children[0]);
+    }
+
+    /**
      * It should visit and composites.
      */
     public function testVisitCompositeAnd()
