@@ -15,7 +15,7 @@ class AgentFinder
         $this->agents = $agents;
     }
 
-    public function findAgentFor(string $classFqn)
+    public function findFor(string $classFqn)
     {
         foreach ($this->agents as $agent) {
             if ($agent->supports($classFqn)) {
@@ -30,6 +30,32 @@ class AgentFinder
         throw new Exception\AgentNotFoundException(sprintf(
             'Could not find an agent supporting class "%s". Registered agents: "%s"',
             $classFqn, implode('", "', $classes)
+        ));
+    }
+
+    public function get(string $name)
+    {
+        if (!isset($this->agents[$name])) {
+            throw new Exception\AgentNotFoundException(sprintf(
+                'Could not find an agent named "%s". Registered agent names: "%s"',
+                $name, implode('", "', array_keys($this->agents))
+            ));
+        }
+
+        return $this->agents[$name];
+    }
+
+    public function getName(AgentInterface $unknownAgent)
+    {
+        foreach ($this->agents as $name => $agent) {
+            if ($agent === $unknownAgent) {
+                return $name;
+            }
+        }
+
+        throw new \RuntimeException(sprintf(
+            'Could not identify agent of class "%s"',
+            get_class($unknownAgent)
         ));
     }
 }
