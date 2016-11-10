@@ -176,4 +176,17 @@ class ExpressionVisitorTest extends OrmTestCase
         $this->assertInstanceOf(Comparison::class, $parts[0]);
         $this->assertInstanceOf(Orx::class, $parts[1]);
     }
+
+    /**
+     * It should process "empty" composites.
+     */
+    public function testVisitEmptyComposite()
+    {
+        $expr = $this->visitor->dispatch(
+            Query::composite('and')
+        );
+
+        $this->assertInstanceOf(Andx::class, $expr);
+        $this->assertCount(0, $expr->getParts());
+    }
 }
