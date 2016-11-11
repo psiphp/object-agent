@@ -53,6 +53,11 @@ class EventDispatchingAgent implements AgentInterface
         return $this->agent->query($query);
     }
 
+    public function queryCount(Query $query): int
+    {
+        return $this->agent->queryCount($query);
+    }
+
     /**
      * {@inheritdoc}
      */

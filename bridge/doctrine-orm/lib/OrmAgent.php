@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Psi\Component\ObjectAgent\AgentInterface;
 use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
@@ -16,6 +18,8 @@ use Psi\Component\ObjectAgent\Query\Query;
 
 class OrmAgent implements AgentInterface
 {
+    const SOURCE_ALIAS = 'a';
+
     private $entityManager;
 
     public function __construct(
@@ -31,6 +35,7 @@ class OrmAgent implements AgentInterface
     {
         return Capabilities::create([
             'can_set_parent' => false,
+            'can_query_count' => true,
             'supported_comparators' => [
                 Comparison::EQUALS,
                 Comparison::NOT_EQUALS,
@@ -139,21 +144,10 @@ class OrmAgent implements AgentInterface
      */
     public function query(Query $query): \Traversable
     {
-        $sourceAlias = 'a';
-        $queryBuilder = $this->entityManager->getRepository($query->getClassFqn())->createQueryBuilder($sourceAlias);
-        $visitor = new ExpressionVisitor(
-            $queryBuilder->expr(),
-            $sourceAlias
-        );
-
-        if ($query->hasExpression()) {
-            $expr = $visitor->dispatch($query->getExpression());
-            $queryBuilder->where($expr);
-            $queryBuilder->setParameters($visitor->getParameters());
-        }
+        $queryBuilder = $this->getQueryBuilder($query);
 
         foreach ($query->getOrderings() as $field => $order) {
-            $queryBuilder->addOrderBy($sourceAlias . '.' . $field, $order);
+            $queryBuilder->addOrderBy(self::SOURCE_ALIAS . '.' . $field, $order);
         }
 
         if (null !== $query->getFirstResult()) {
@@ -169,11 +163,36 @@ class OrmAgent implements AgentInterface
         );
     }
 
+    public function queryCount(Query $query): int
+    {
+        $queryBuilder = $this->getQueryBuilder($query);
+        $paginator = new Paginator($queryBuilder->getQuery());
+
+        return count($paginator);
+    }
+
     /**
      * Return the entity manager instance (for use in events).
      */
     public function getEntityManager(): EntityManagerInterface
     {
         return $this->entityManager;
+    }
+
+    private function getQueryBuilder(Query $query): QueryBuilder
+    {
+        $queryBuilder = $this->entityManager->getRepository($query->getClassFqn())->createQueryBuilder(self::SOURCE_ALIAS);
+        $visitor = new ExpressionVisitor(
+            $queryBuilder->expr(),
+            self::SOURCE_ALIAS
+        );
+
+        if ($query->hasExpression()) {
+            $expr = $visitor->dispatch($query->getExpression());
+            $queryBuilder->where($expr);
+            $queryBuilder->setParameters($visitor->getParameters());
+        }
+
+        return $queryBuilder;
     }
 }

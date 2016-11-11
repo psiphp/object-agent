@@ -36,6 +36,7 @@ class CollectionsAgent implements AgentInterface
     {
         return Capabilities::create([
             'can_set_parent' => false,
+            'can_query_count' => true,
             'supported_comparators' => [
                 Comparison::EQUALS,
                 Comparison::NOT_EQUALS,
@@ -90,23 +91,19 @@ class CollectionsAgent implements AgentInterface
      */
     public function query(Query $query): \Traversable
     {
-        $collection = $this->store->getCollection($query->getClassFqn());
-
-        $doctrineExpression = null;
-        if ($query->hasExpression()) {
-            $expressionBuilder = Criteria::expr();
-            $visitor = new CollectionsVisitor($expressionBuilder);
-            $doctrineExpression = $visitor->dispatch($query->getExpression());
-        }
-
-        $criteria = new Criteria(
-            $doctrineExpression,
-            $query->getOrderings(),
+        return $this->doQuery(
+            $query,
             $query->getFirstResult(),
             $query->getMaxResults()
         );
+    }
 
-        return $collection->matching($criteria);
+    /**
+     * {@inheritdoc}
+     */
+    public function queryCount(Query $query): int
+    {
+        return count($this->doQuery($query, 0));
     }
 
     /**
@@ -132,5 +129,26 @@ class CollectionsAgent implements AgentInterface
     public function setParent($object, $parent)
     {
         throw BadMethodCallException::setParentNotSupported(__CLASS__);
+    }
+
+    private function doQuery(Query $query, int $firstResult = null, int $maxResults = null)
+    {
+        $collection = $this->store->getCollection($query->getClassFqn());
+
+        $doctrineExpression = null;
+        if ($query->hasExpression()) {
+            $expressionBuilder = Criteria::expr();
+            $visitor = new CollectionsVisitor($expressionBuilder);
+            $doctrineExpression = $visitor->dispatch($query->getExpression());
+        }
+
+        $criteria = new Criteria(
+            $doctrineExpression,
+            $query->getOrderings(),
+            $firstResult,
+            $maxResults
+        );
+
+        return $collection->matching($criteria);
     }
 }
