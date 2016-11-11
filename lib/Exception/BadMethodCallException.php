@@ -19,6 +19,14 @@ class BadMethodCallException extends \BadMethodCallException
         ));
     }
 
+    public static function queryCountNotSupported(string $implementation)
+    {
+        throw new self(sprintf(
+            'queryCount is not supported by the %s agent',
+            $implementation
+        ));
+    }
+
     public static function comparisonNotSupported(string $comparison)
     {
         throw new self(sprintf(

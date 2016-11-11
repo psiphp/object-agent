@@ -3,6 +3,7 @@
 namespace Psi\Component\ObjectAgent\Tests\Functional;
 
 use Psi\Component\ObjectAgent\Capabilities;
+use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Query;
 use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
@@ -98,6 +99,29 @@ trait AgentTestTrait
         ));
         $results = $this->agent->query($query);
         $this->assertCount(1, $results);
+    }
+
+    /**
+     * It should return the total number of records that could
+     * be reached by a query.
+     */
+    public function testQueryCount()
+    {
+        if (false === $this->agent->getCapabilities()->canQueryCount()) {
+            $this->setExpectedException(BadMethodCallException::class);
+            $query = Query::create(Page::class, null, [], 1, 2);
+            $this->assertEquals(4, $this->agent->queryCount($query));
+
+            return;
+        }
+
+        $this->createPage('Foobar');
+        $this->createPage('Hello');
+        $this->createPage('Goodbye');
+        $this->createPage('Barfood');
+
+        $query = Query::create(Page::class, null, [], 1, 2);
+        $this->assertEquals(4, $this->agent->queryCount($query));
     }
 
     /**
