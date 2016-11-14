@@ -48,7 +48,7 @@ class StoreTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should delete an object.
+     * It should remove an object.
      */
     public function testDelete()
     {
@@ -59,7 +59,7 @@ class StoreTest extends \PHPUnit_Framework_TestCase
                 new \stdClass(),
             ],
         ]);
-        $store->delete($target);
+        $store->remove($target);
         $collection = $store->getCollection(\stdClass::class);
         $this->assertCount(2, $collection);
     }

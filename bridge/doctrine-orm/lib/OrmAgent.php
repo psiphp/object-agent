@@ -12,6 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Psi\Component\ObjectAgent\AgentInterface;
 use Psi\Component\ObjectAgent\Capabilities;
+use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Query;
@@ -59,10 +60,7 @@ class OrmAgent implements AgentInterface
     public function find($identifier, string $class = null)
     {
         if (null === $class) {
-            throw new \BadMethodCallException(sprintf(
-                'The "class" argument is mandatory for the doctrine ORM (when called with identifier "%s")',
-                $identifier
-            ));
+            throw BadMethodCallException::classArgumentIsMandatory(__CLASS__);
         }
 
         $object = $this->entityManager->find($class, $identifier);
@@ -77,18 +75,53 @@ class OrmAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
-    public function save($object)
+    public function findMany(array $identifiers, string $class = null)
     {
-        $this->entityManager->persist($object);
-        $this->entityManager->flush();
+        if (null === $class) {
+            throw BadMethodCallException::classArgumentIsMandatory(__CLASS__);
+        }
+
+        $classMetadata = $this->entityManager->getMetadataFactory()->getMetadataFor($class);
+
+        $idFields = $classMetadata->getIdentifier();
+
+        if (count($idFields) > 1) {
+            throw new \RuntimeException(sprintf(
+                'Only objects with a single primary key are supported. Class: "%s", primary key fields: "%s"',
+                $class, implode('", "', $idFields)
+            ));
+        }
+
+        $idField = reset($idFields);
+
+        $queryBuilder = $this->entityManager->getRepository($class)->createQueryBuilder('a');
+        $queryBuilder->where($queryBuilder->expr()->in('a.' . $idField, ':identifiers'));
+        $queryBuilder->setParameter('identifiers', $identifiers);
+
+        return $queryBuilder->getQuery()->execute();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function delete($object)
+    public function persist($object)
+    {
+        $this->entityManager->persist($object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($object)
     {
         $this->entityManager->remove($object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function flush()
+    {
         $this->entityManager->flush();
     }
 

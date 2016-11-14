@@ -50,13 +50,31 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should delegate delete.
+     * It should delegate find many.
+     */
+    public function testDelegateFindMany()
+    {
+        $ids = ['abc', 'bcd'];
+        $class = \stdClass::class;
+        $this->innerAgent->findMany($ids, $class)->willReturn([
+            $object1 = new \stdClass(),
+            $object2 = new \stdClass(),
+        ]);
+
+        $result = $this->agent->findMany($ids, $class);
+        $this->assertSame([
+            $object1, $object2,
+        ], $result);
+    }
+
+    /**
+     * It should delegate remove.
      */
     public function testDelegateDelete()
     {
         $object = new \stdClass();
-        $this->innerAgent->delete($object)->shouldBeCalled();
-        $this->agent->delete($object);
+        $this->innerAgent->remove($object)->shouldBeCalled();
+        $this->agent->remove($object);
     }
 
     /**
@@ -104,16 +122,16 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * It should dispatch events for save.
+     * It should dispatch events for persist.
      */
-    public function testSaveDispatch()
+    public function testPersistDispatch()
     {
         $object = new \stdClass();
-        $this->expectObjectEvent('psi_object_agent.pre_save', $object);
-        $this->innerAgent->save($object)->shouldBeCalled();
-        $this->expectObjectEvent('psi_object_agent.post_save', $object);
+        $this->expectObjectEvent('psi_object_agent.pre_persist', $object);
+        $this->innerAgent->persist($object)->shouldBeCalled();
+        $this->expectObjectEvent('psi_object_agent.post_persist', $object);
 
-        $this->agent->save($object);
+        $this->agent->persist($object);
     }
 
     private function expectObjectEvent($eventName, $object)

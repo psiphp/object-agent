@@ -13,6 +13,10 @@ interface AgentInterface
      */
     public function supports(string $class): bool;
 
+    /**
+     * Return the capabilities object which indicates which features are
+     * supported by the underlying storage engine.
+     */
     public function getCapabilities(): Capabilities;
 
     /**
@@ -34,18 +38,35 @@ interface AgentInterface
     public function find($identifier, string $class = null);
 
     /**
-     * Save the given object and flush the storage.
+     * As with #find but for many identifiers.
      *
-     * @param object $object
+     * @param int|string[] $identifiers
+     *
+     * @throws Exception\ObjectNotFoundException
+     * @throws Psi\Component\ObjectAgent\Exception\BadMethodCallException
+     *
+     * @return object[]
      */
-    public function save($object);
+    public function findMany(array $identifiers, string $class = null);
 
     /**
-     * Remove the given object and flush the storage.
+     * Persist the given object.
      *
      * @param object $object
      */
-    public function delete($object);
+    public function persist($object);
+
+    /**
+     * Remove the given object.
+     *
+     * @param object $object
+     */
+    public function remove($object);
+
+    /**
+     * Flush the storage.
+     */
+    public function flush();
 
     /**
      * Perform a query and return a collection of objects.

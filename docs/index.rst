@@ -41,8 +41,9 @@ Basic usage is as follows:
 
     // use the agent
     $object = $agent->find(1234, SomeRandomClass::class);
-    $agent->save($object);
+    $agent->persist($object);
     $agent->remove($object);
+    $agent->flush();
 
 
 Events

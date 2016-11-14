@@ -59,7 +59,7 @@ final class Store
         return $collection[$identifier];
     }
 
-    public function delete($object)
+    public function remove($object)
     {
         $classFqn = get_class($object);
         $collection = $this->getCollection($classFqn);

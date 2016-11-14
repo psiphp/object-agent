@@ -21,17 +21,6 @@ class OrmAgentTest extends OrmTestCase
     }
 
     /**
-     * It should throw an exception if no class argument is given to find.
-     *
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage The "class" argument is mandatory for the doctrine ORM
-     */
-    public function testNoClass()
-    {
-        $this->agent->find(12);
-    }
-
-    /**
      * It should throw a BadMethodCallException if set parent is called.
      *
      * @expectedException \BadMethodCallException

@@ -41,6 +41,14 @@ class PhpcrOdmAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
+    public function findMany(array $identifiers, string $class = null)
+    {
+        return $this->documentManager->findMany($class, $identifiers);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getCapabilities(): Capabilities
     {
         return Capabilities::create([
@@ -65,18 +73,24 @@ class PhpcrOdmAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
-    public function save($object)
+    public function persist($object)
     {
         $this->documentManager->persist($object);
-        $this->documentManager->flush();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function delete($object)
+    public function remove($object)
     {
         $this->documentManager->remove($object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function flush()
+    {
         $this->documentManager->flush();
     }
 

@@ -31,6 +31,28 @@ trait AgentTestTrait
     }
 
     /**
+     * It should find many.
+     */
+    public function testFindMany()
+    {
+        $page1 = $this->createPage('Foobar');
+        $page2 = $this->createPage('Hello');
+        $page3 = $this->createPage('Hello');
+
+        $pages = $this->agent->findMany([
+            $page1->id,
+            $page2->id,
+        ], Page::class);
+
+        $this->assertCount(2, $pages);
+        if (!is_array($pages)) {
+            $pages = iterator_to_array($pages);
+        }
+        $this->assertSame($page1, array_shift($pages));
+        $this->assertSame($page2, array_shift($pages));
+    }
+
+    /**
      * It should throw an exception if the object was not found.
      *
      * @expectedException Psi\Component\ObjectAgent\Exception\ObjectNotFoundException
@@ -40,29 +62,31 @@ trait AgentTestTrait
     {
         $this->createPage('Foobar');
         $this->createPage('Hello');
-        $fo = $this->agent->find(7, Page::class);
+        $fo = $this->agent->find('asd', Page::class);
     }
 
     /**
-     * It should thro.
+     * It should save.
      */
     public function testSave()
     {
         $page = $this->createPage();
-        $this->agent->save($page);
+        $this->agent->persist($page);
+        $this->agent->flush();
     }
 
     /**
-     * It should delete.
+     * It should remove.
      */
     public function testDelete()
     {
         $page = $this->createPage();
-        $this->agent->delete($page);
+        $this->agent->remove($page);
+        $this->agent->flush();
 
         try {
             $object = $this->agent->find($page->id, Page::class);
-            $this->fail('Objecvt was not deleted');
+            $this->fail('Object was not removed');
         } catch (ObjectNotFoundException $e) {
         }
     }

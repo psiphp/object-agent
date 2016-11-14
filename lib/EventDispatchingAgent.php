@@ -38,11 +38,19 @@ class EventDispatchingAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
-    public function save($object)
+    public function findMany(array $identifiers, string $class = null)
     {
-        $this->dispatch(Events::PRE_SAVE, $object);
-        $this->agent->save($object);
-        $this->dispatch(Events::POST_SAVE, $object);
+        return $this->agent->findMany($identifiers, $class);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function persist($object)
+    {
+        $this->dispatch(Events::PRE_PERSIST, $object);
+        $this->agent->persist($object);
+        $this->dispatch(Events::POST_PERSIST, $object);
     }
 
     /**
@@ -53,6 +61,9 @@ class EventDispatchingAgent implements AgentInterface
         return $this->agent->query($query);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function queryCount(Query $query): int
     {
         return $this->agent->queryCount($query);
@@ -61,11 +72,19 @@ class EventDispatchingAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
-    public function delete($object)
+    public function remove($object)
     {
-        $this->dispatch(Events::PRE_DELETE, $object);
-        $this->agent->delete($object);
-        $this->dispatch(Events::POST_DELETE, $object);
+        $this->dispatch(Events::PRE_REMOVE, $object);
+        $this->agent->remove($object);
+        $this->dispatch(Events::POST_REMOVE, $object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function flush()
+    {
+        $this->agent->flush();
     }
 
     /**
