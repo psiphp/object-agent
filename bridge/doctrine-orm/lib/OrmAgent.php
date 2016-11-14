@@ -80,16 +80,18 @@ class OrmAgent implements AgentInterface
         if (null === $class) {
             throw BadMethodCallException::classArgumentIsMandatory(__CLASS__);
         }
+
         $classMetadata = $this->entityManager->getMetadataFactory()->getMetadataFor($class);
 
         $idFields = $classMetadata->getIdentifier();
 
         if (count($idFields) > 1) {
             throw new \RuntimeException(sprintf(
-                'Only objects with a single primary key are supported. Class: "%s", PKs: "%s"',
+                'Only objects with a single primary key are supported. Class: "%s", primary key fields: "%s"',
                 $class, implode('", "', $idFields)
             ));
         }
+
         $idField = reset($idFields);
 
         $queryBuilder = $this->entityManager->getRepository($class)->createQueryBuilder('a');
