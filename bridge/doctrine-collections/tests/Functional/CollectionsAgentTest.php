@@ -42,7 +42,7 @@ class CollectionsAgentTest extends \PHPUnit_Framework_TestCase
         $page = new Page();
         $page->id = $id++;
         $page->title = $title;
-        $this->agent->save($page);
+        $this->agent->persist($page);
         $collection = $this->store->getOrCreateCollection(Page::class);
         $collection->set($page->id, $page);
 

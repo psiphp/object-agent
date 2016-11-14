@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Psi\Bridge\ObjectAgent\Doctrine\Collections;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Psi\Component\ObjectAgent\AgentInterface;
 use Psi\Component\ObjectAgent\Capabilities;
@@ -73,7 +74,20 @@ class CollectionsAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
-    public function save($object)
+    public function findMany(array $identifiers, string $classFqn = null)
+    {
+        $collection = [];
+        foreach ($identifiers as $identifier) {
+            $collection[] = $this->find($identifier, $classFqn);
+        }
+
+        return new ArrayCollection($collection);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function persist($object)
     {
         // do nothing ...
     }
@@ -81,9 +95,17 @@ class CollectionsAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
-    public function delete($object)
+    public function flush()
     {
-        $this->store->delete($object);
+        // do nothing ...
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($object)
+    {
+        $this->store->remove($object);
     }
 
     /**

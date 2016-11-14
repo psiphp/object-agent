@@ -4,9 +4,9 @@ namespace Psi\Component\ObjectAgent;
 
 class Events
 {
-    const PRE_SAVE = 'psi_object_agent.pre_save';
-    const POST_SAVE = 'psi_object_agent.post_save';
+    const PRE_PERSIST = 'psi_object_agent.pre_persist';
+    const POST_PERSIST = 'psi_object_agent.post_persist';
 
-    const PRE_DELETE = 'psi_object_agent.pre_delete';
-    const POST_DELETE = 'psi_object_agent.post_delete';
+    const PRE_REMOVE = 'psi_object_agent.pre_remove';
+    const POST_REMOVE = 'psi_object_agent.post_remove';
 }
