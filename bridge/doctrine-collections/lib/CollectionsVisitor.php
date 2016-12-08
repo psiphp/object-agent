@@ -68,13 +68,11 @@ class CollectionsVisitor
 
             case Comparison::NOT_CONTAINS:
                 throw BadMethodCallException::comparisonNotSupported(Comparison::NOT_CONTAINS);
-
             case Comparison::NULL:
                 return $this->expressionBuilder->isNull($field, $value);
 
             case Comparison::NOT_NULL:
                 throw BadMethodCallException::comparisonNotSupported(Comparison::NOT_NULL);
-
         }
 
         throw new \RuntimeException('Unknown comparator: ' . $comparison->getComparator());
