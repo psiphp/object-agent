@@ -7,6 +7,7 @@ use Psi\Component\ObjectAgent\Query\Query;
 use Psi\Component\ObjectAgent\Query\Composite;
 use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Expression;
+use Psi\Component\ObjectAgent\Query\Join;
 
 class ArrayConverterTest extends \PHPUnit_Framework_TestCase
 
@@ -18,10 +19,9 @@ class ArrayConverterTest extends \PHPUnit_Framework_TestCase
     {
         $orderings = [ 'foo' => 'asc' ];
         $selects = [ 'a.foobar' => 'foobar' ];
-        $joins = [ Query::join('f.foobar', 'f') ];
         $query = (new ArrayConverter())->__invoke([
             'from' => \stdClass::class,
-            'joins' => $joins,
+            'joins' => [ [ "join" => "f.foobar", "alias" => "f" ] ],
             'selects' => $selects,
             'orderings' => $orderings,
             'firstResult' => 5,
@@ -30,9 +30,12 @@ class ArrayConverterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($selects, $query->getSelects());
         $this->assertEquals($orderings, $query->getOrderings());
-        $this->assertEquals($joins, $query->getJoins());
         $this->assertEquals(5, $query->getFirstResult());
         $this->assertEquals(10, $query->getMaxResults());
+
+        $this->assertEquals([
+            new Join('f.foobar', 'f')
+        ], $query->getJoins());
     }
 
     /**

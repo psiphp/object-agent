@@ -5,6 +5,7 @@ namespace Psi\Component\ObjectAgent\Query\Converter;
 use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Composite;
 use Psi\Component\ObjectAgent\Query\Query;
+use Psi\Component\ObjectAgent\Query\Join;
 
 class ArrayConverter
 {
@@ -47,10 +48,28 @@ class ArrayConverter
         }
 
         $query['criteria'] = new Composite(Composite::AND, $this->walkCriteria($query['criteria']));
+        $query['joins'] = $this->walkJoins($query['joins']);
         $from = $query['from'];
         unset($query['from']);
 
         return Query::create($from, $query);
+    }
+
+    private function walkJoins(array $joins)
+    {
+        $joinObjects = [];
+
+        foreach ($joins as $join) {
+            $join = $this->merge([
+                'type' => Join::INNER_JOIN,
+                'join'=> null,
+                'alias' => null,
+            ], $join, [ 'join', 'alias']);
+
+            $joinObjects[] = new Join($join['join'], $join['alias'], $join['type']);
+        }
+
+        return $joinObjects;
     }
 
     private function walkCriteria(array $exprs, array $original = null)
@@ -92,8 +111,15 @@ class ArrayConverter
         return json_encode($expr);
     }
 
-    private function merge(array $defaults, array $values)
+    private function merge(array $defaults, array $values, array $required = [])
     {
+        if ($diff = array_diff($required, array_keys($values))) {
+            throw new \InvalidArgumentException(sprintf(
+                'Keys "%s" are required for "%s"',
+                implode('", "', $diff),  json_encode($values)
+            ));
+        }
+
         if ($diff = array_diff(array_keys($values), array_keys($defaults))) {
             throw new \InvalidArgumentException(sprintf(
                 'Invalid query keys "%s", valid keys: "%s"',
