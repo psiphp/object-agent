@@ -17,6 +17,11 @@ class Join
     /**
      * @var string
      */
+    private $join;
+
+    /**
+     * @var string
+     */
     private $type;
 
     /**
@@ -24,18 +29,19 @@ class Join
      */
     private $alias;
 
-    public function __construct(string $type, string $alias)
+    public function __construct(string $join, string $alias, string $type = self::INNER_JOIN)
     {
         if (!in_array($type, self::$validTypes)) {
             throw new \InvalidArgumentException(sprintf(
                 'Unknown join type "%s". Known joins: "%s"',
-                $comparator,
+                $type,
                 implode('", "', self::$validTypes)
             ));
         }
 
         $this->type = $type;
         $this->alias = $alias;
+        $this->joins = $join;
     }
 
     public function getType() 
@@ -46,5 +52,10 @@ class Join
     public function getAlias() 
     {
         return $this->alias;
+    }
+
+    public function getJoin() 
+    {
+        return $this->join;
     }
 }

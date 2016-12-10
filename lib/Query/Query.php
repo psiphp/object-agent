@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Psi\Component\ObjectAgent\Query;
 
+use Psi\Component\ObjectAgent\Query\Join;
+
 final class Query
 {
     private $classFqn;
@@ -11,6 +13,8 @@ final class Query
     private $orderings;
     private $firstResult;
     private $maxResults;
+    private $joins;
+    private $selects;
 
     private function __construct(
         string $classFqn,
@@ -26,6 +30,11 @@ final class Query
         $this->orderings = $orderings;
         $this->firstResult = $firstResult;
         $this->maxResults = $maxResults;
+        $this->joins = $joins;
+        $this->selects = $selects;
+
+        array_walk($joins, function (Join $join) {
+        });
     }
 
     public static function create(
@@ -63,6 +72,11 @@ final class Query
         return new Composite($type, $expressions);
     }
 
+    public static function join(string $type, string $alias)
+    {
+        return new Join($type, $alias);
+    }
+
     public function getClassFqn(): string
     {
         return $this->classFqn;
@@ -91,5 +105,15 @@ final class Query
     public function getFirstResult()
     {
         return $this->firstResult;
+    }
+
+    public function getJoins(): array
+    {
+        return $this->joins;
+    }
+
+    public function getSelects(): array
+    {
+        return $this->selects;
     }
 }
