@@ -9,6 +9,7 @@ use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Query;
 use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
+use Psi\Component\ObjectAgent\Tests\Functional\Model\Comment;
 
 trait AgentTestTrait
 {
@@ -223,7 +224,35 @@ trait AgentTestTrait
         $this->assertEquals('zzzz', $first->title);
     }
 
-    private function createPage($title = 'Hello World')
+    public function testQueryJoin()
+    {
+        if (false === $this->agent->getCapabilities()->canQueryJoin()) {
+            $this->markTestSkipped('Not supported');
+            return;
+        }
+
+        $page = $this->createPage('Page title');
+        $this->createCommentForPage($page, 'hello world');
+        $this->clearManager();
+
+        $query = Query::create(Comment::class, [
+            'selects' => [ 'a' => 'comment', 'p.title' => 'title' ],
+            'joins' => [ Query::join('a.page', 'p') ],
+        ]);
+
+        $result = $this->agent->query($query);
+
+    }
+
+    private function clearManager()
+    {
+    }
+
+    private function createPage($title = 'Hello World'): Page
+    {
+    }
+
+    private function createCommentForPage(Page $page, string $title): Comment
     {
     }
 }

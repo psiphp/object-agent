@@ -9,6 +9,7 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query as OrmQuery;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Psi\Component\ObjectAgent\AgentInterface;
 use Psi\Component\ObjectAgent\Capabilities;
@@ -16,11 +17,16 @@ use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Query;
+use Psi\Component\ObjectAgent\Query\Join;
+use Doctrine\ORM\Query\Expr\Select;
 
 class OrmAgent implements AgentInterface
 {
     const SOURCE_ALIAS = 'a';
 
+    /**
+     * @var EntityManagerInterface
+     */
     private $entityManager;
 
     public function __construct(
@@ -35,6 +41,7 @@ class OrmAgent implements AgentInterface
     public function getCapabilities(): Capabilities
     {
         return Capabilities::create([
+            'can_query_join' => true,
             'can_set_parent' => false,
             'can_query_count' => true,
             'supported_comparators' => [
@@ -179,6 +186,30 @@ class OrmAgent implements AgentInterface
     {
         $queryBuilder = $this->getQueryBuilder($query);
 
+        $selects = [];
+        foreach ($query->getSelects() as $selectName => $selectAlias) {
+            $select = $selectName . ' ' . $selectAlias;
+            if (is_int($selectName)) {
+                $select = $selectAlias;
+            }
+            $selects[] = $select;
+        }
+
+        if ($selects) {
+            $queryBuilder->select($selects);
+        }
+
+        foreach ($query->getJoins() as $join) {
+            switch ($join->getType()) {
+                case Join::INNER_JOIN:
+                    $queryBuilder->innerJoin($join->getJoin(), $join->getAlias());
+                    break;
+                case Join::LEFT_JOIN:
+                    $queryBuilder->leftJoin($join->getJoin(), $join->getAlias());
+                    break;
+            }
+        }
+
         foreach ($query->getOrderings() as $field => $order) {
             $queryBuilder->addOrderBy(self::SOURCE_ALIAS . '.' . $field, $order);
         }
@@ -210,6 +241,11 @@ class OrmAgent implements AgentInterface
     public function getEntityManager(): EntityManagerInterface
     {
         return $this->entityManager;
+    }
+
+    private function clearManager()
+    {
+        $this->entityManager->clear();
     }
 
     private function getQueryBuilder(Query $query): QueryBuilder

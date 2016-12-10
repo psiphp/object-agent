@@ -41,7 +41,7 @@ class Join
 
         $this->type = $type;
         $this->alias = $alias;
-        $this->joins = $join;
+        $this->join = $join;
     }
 
     public function getType() 

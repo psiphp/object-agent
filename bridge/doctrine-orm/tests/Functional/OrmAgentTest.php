@@ -6,6 +6,7 @@ namespace Psi\Bridge\ObjectAgent\Doctrine\Orm\Tests\Functional;
 
 use Psi\Component\ObjectAgent\Tests\Functional\AgentTestTrait;
 use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
+use Psi\Component\ObjectAgent\Tests\Functional\Model\Comment;
 
 class OrmAgentTest extends OrmTestCase
 {
@@ -44,5 +45,14 @@ class OrmAgentTest extends OrmTestCase
         $this->entityManager->flush();
 
         return $page;
+    }
+
+    private function createCommentForPage(Page $page, string $title)
+    {
+        static $id = 1;
+        $comment = new Comment($page, $title);
+        $comment->id = $id++;
+        $this->entityManager->persist($comment);
+        $this->entityManager->flush();
     }
 }
