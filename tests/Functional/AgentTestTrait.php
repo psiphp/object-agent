@@ -119,10 +119,12 @@ trait AgentTestTrait
     {
         $this->createPage('Foobar');
         $this->createPage('Hello');
-        $query = Query::create(Page::class, Query::composite(
-            'and',
-            Query::comparison('eq', 'title', 'Hello')
-        ));
+        $query = Query::create(Page::class, [
+           'criteria' => Query::composite(
+                'and',
+                Query::comparison('eq', 'title', 'Hello')
+            )
+        ]);
         $results = $this->agent->query($query);
         $this->assertCount(1, $results);
     }
@@ -135,7 +137,10 @@ trait AgentTestTrait
     {
         if (false === $this->agent->getCapabilities()->canQueryCount()) {
             $this->setExpectedException(BadMethodCallException::class);
-            $query = Query::create(Page::class, null, [], 1, 2);
+            $query = Query::create(Page::class, [
+                'firstResult' => 1, 
+                'maxResults' => 2
+            ]);
             $this->assertEquals(4, $this->agent->queryCount($query));
 
             return;
@@ -146,7 +151,10 @@ trait AgentTestTrait
         $this->createPage('Goodbye');
         $this->createPage('Barfood');
 
-        $query = Query::create(Page::class, null, [], 1, 2);
+        $query = Query::create(Page::class, [
+            'firstResult' => 1, 
+            'maxResults' => 2
+        ]);
         $this->assertEquals(4, $this->agent->queryCount($query));
     }
 
@@ -173,7 +181,10 @@ trait AgentTestTrait
         $this->createPage('aaaa');
         $this->createPage('aaaa');
         $this->createPage('zzzz');
-        $query = Query::create(Page::class, null, [], 0, 2);
+        $query = Query::create(Page::class, [
+            'firstResult' => 0, 
+            'maxResults' => 2
+        ]);
         $results = $this->agent->query($query);
         $this->assertCount(2, $results);
     }
@@ -187,7 +198,10 @@ trait AgentTestTrait
         $this->createPage('aaaa');
         $this->createPage('aaaa');
         $this->createPage('zzzz');
-        $query = Query::create(Page::class, null, [], 3, 2);
+        $query = Query::create(Page::class, [
+            'firstResult' => 3, 
+            'maxResults' => 2
+        ]);
         $results = $this->agent->query($query);
         $this->assertCount(1, $results);
         $first = $results->first();
@@ -201,8 +215,8 @@ trait AgentTestTrait
     {
         $this->createPage('aaaa');
         $this->createPage('zzzz');
-        $query = Query::create(Page::class, null, [
-            'title' => 'desc',
+        $query = Query::create(Page::class, [
+            'orderings' => [ 'title' => 'desc' ],
         ]);
         $results = $this->agent->query($query);
         $first = $results->first();

@@ -4,15 +4,6 @@ declare(strict_types=1);
 
 namespace Psi\Component\ObjectAgent\Query;
 
-/**
- * Query::from(Foo::class)
- *   ->where(
- *       Query::and(
- *           Query::comparison('eq', 'foo', 'bar'),
- *           Query::comparison('gt', 10, 5),
- *       )
- *   );.
- */
 final class Query
 {
     private $classFqn;
@@ -21,10 +12,12 @@ final class Query
     private $firstResult;
     private $maxResults;
 
-    public function __construct(
+    private function __construct(
         string $classFqn,
+        array $selects = [],
+        array $joins = [],
         Expression $expression = null,
-        array $orderings = null,
+        array $orderings = [],
         int $firstResult = null,
         int $maxResults = null
     ) {
@@ -37,12 +30,27 @@ final class Query
 
     public static function create(
         string $classFqn,
-        Expression $expression = null,
-        array $orderings = [],
-        int $firstResult = null,
-        int $maxResults = null
+        array $query = []
     ) {
-        return new self($classFqn, $expression, $orderings, $firstResult, $maxResults);
+        $defaults = [
+            'selects' => [],
+            'criteria' => null,
+            'orderings' => [],
+            'joins' => [],
+            'firstResult' => null,
+            'maxResults' => null,
+        ];
+
+        if ($diff = array_diff(array_keys($query), array_keys($defaults))) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid query keys "%s", valid keys: "%s"',
+                implode('", "', $diff), implode('", "', array_keys($defaults))
+            ));
+        }
+
+        $query = array_merge($defaults, $query);
+
+        return new self($classFqn, $query['selects'], $query['joins'], $query['criteria'], $query['orderings'], $query['firstResult'], $query['maxResults']);
     }
 
     public static function comparison(string $comparator, $value1, $value2): Comparison
