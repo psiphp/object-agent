@@ -34,7 +34,7 @@ class ArrayConverter
         $query = $this->merge([
             'selects' => [],
             'from' => null,
-            'criteria' => [],
+            'criteria' => null,
             'orderings' => [],
             'joins' => [],
             'firstResult' => null,
@@ -47,7 +47,10 @@ class ArrayConverter
             ));
         }
 
-        $query['criteria'] = new Composite(Composite::AND, $this->walkCriteria($query['criteria']));
+        if ($query['criteria']) {
+            $query['criteria'] = new Composite(Composite::AND, $this->walkCriteria($query['criteria']));
+        }
+
         $query['joins'] = $this->walkJoins($query['joins']);
         $from = $query['from'];
         unset($query['from']);
