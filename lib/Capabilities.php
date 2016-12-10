@@ -10,6 +10,7 @@ final class Capabilities
     private $setParent;
     private $queryCount;
     private $queryJoin;
+    private $querySelect;
 
     private function __construct()
     {
@@ -23,6 +24,7 @@ final class Capabilities
             'can_set_parent' => false,
             'can_query_count' => false,
             'can_query_join' => false,
+            'can_query_select' => false,
             'can_join' => false,
         ];
 
@@ -40,6 +42,7 @@ final class Capabilities
         $instance->setParent = (bool) $capabilities['can_set_parent'];
         $instance->queryJoin = (bool) $capabilities['can_query_join'];
         $instance->queryCount = (bool) $capabilities['can_query_count'];
+        $instance->querySelect = (bool) $capabilities['can_query_select'];
 
         return $instance;
     }
@@ -62,5 +65,10 @@ final class Capabilities
     public function canQueryJoin(): bool
     {
         return $this->queryJoin;
+    }
+
+    public function canQuerySelect(): bool
+    {
+        return $this->querySelect;
     }
 }

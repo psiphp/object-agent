@@ -42,6 +42,7 @@ class OrmAgent implements AgentInterface
     {
         return Capabilities::create([
             'can_query_join' => true,
+            'can_query_select' => true,
             'can_set_parent' => false,
             'can_query_count' => true,
             'supported_comparators' => [

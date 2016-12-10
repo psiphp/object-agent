@@ -241,8 +241,30 @@ trait AgentTestTrait
         ]);
 
         $result = $this->agent->query($query);
-
+        $this->assertCount(1, $result);
+        $this->assertEquals('Page title', $result[0]['title']);
     }
+
+    public function testQuerySelect()
+    {
+        if (false === $this->agent->getCapabilities()->canQuerySelect()) {
+            $this->markTestSkipped('Not supported');
+            return;
+        }
+
+        $page = $this->createPage('Page title');
+        $this->createCommentForPage($page, 'hello world');
+        $this->clearManager();
+
+        $query = Query::create(Comment::class, [
+            'selects' => [ 'a' => 'comment', 'a.title' => 'title' ],
+        ]);
+
+        $result = $this->agent->query($query);
+        $this->assertCount(1, $result);
+        $this->assertEquals('hello world', $result[0]['title']);
+    }
+
 
     private function clearManager()
     {
