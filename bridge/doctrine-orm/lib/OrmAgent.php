@@ -220,11 +220,6 @@ class OrmAgent implements AgentInterface
         return $this->entityManager;
     }
 
-    private function clearManager()
-    {
-        $this->entityManager->clear();
-    }
-
     private function getQueryBuilder(Query $query): QueryBuilder
     {
         $queryBuilder = $this->entityManager->getRepository(
@@ -255,7 +250,7 @@ class OrmAgent implements AgentInterface
             $selects[] = $select;
         }
 
-        if ($selects) {
+        if (false === empty($selects)) {
             $queryBuilder->select($selects);
         }
 

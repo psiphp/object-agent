@@ -52,40 +52,40 @@ class ExpressionVisitor
 
         switch ($comparison->getComparator()) {
             case Comparison::EQUALS:
-                return $this->expressionFactory->eq($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->eq($this->getField($field), $this->registerParameter($value));
 
             case Comparison::NOT_EQUALS:
-                return $this->expressionFactory->neq($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->neq($this->getField($field), $this->registerParameter($value));
 
             case Comparison::LESS_THAN:
-                return $this->expressionFactory->lt($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->lt($this->getField($field), $this->registerParameter($value));
 
             case Comparison::LESS_THAN_EQUAL:
-                return $this->expressionFactory->lte($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->lte($this->getField($field), $this->registerParameter($value));
 
             case Comparison::GREATER_THAN:
-                return $this->expressionFactory->gt($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->gt($this->getField($field), $this->registerParameter($value));
 
             case Comparison::GREATER_THAN_EQUAL:
-                return $this->expressionFactory->gte($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->gte($this->getField($field), $this->registerParameter($value));
 
             case Comparison::IN:
-                return $this->expressionFactory->in($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->in($this->getField($field), $this->registerParameter($value));
 
             case Comparison::NOT_IN:
-                return $this->expressionFactory->notIn($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->notIn($this->getField($field), $this->registerParameter($value));
 
             case Comparison::CONTAINS:
-                return $this->expressionFactory->like($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->like($this->getField($field), $this->registerParameter($value));
 
             case Comparison::NOT_CONTAINS:
-                return $this->expressionFactory->notLike($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->notLike($this->getField($field), $this->registerParameter($value));
 
             case Comparison::NULL:
-                return $this->expressionFactory->isNull($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->isNull($this->getField($field), $this->registerParameter($value));
 
             case Comparison::NOT_NULL:
-                return $this->expressionFactory->isNotNull($this->getField($field), $this->registerParameter($field, $value));
+                return $this->expressionFactory->isNotNull($this->getField($field), $this->registerParameter($value));
         }
 
         throw new \RuntimeException('Unknown comparator: ' . $comparison->getComparator());
@@ -116,7 +116,7 @@ class ExpressionVisitor
         return $this->sourceAlias . '.' . $field;
     }
 
-    private function registerParameter(string $name, $value)
+    private function registerParameter($value)
     {
         $name = 'param' . $this->paramIndex++;
         $this->parameters[$name] = $value;
