@@ -106,11 +106,15 @@ class ExpressionVisitor
 
     private function getField($field): string
     {
+        if (strpos($field, '.') !== 0) {
+            return $field;
+        }
         return $this->sourceAlias . '.' . $field;
     }
 
     private function registerParameter(string $name, $value)
     {
+        $name = str_replace('.', '_', $name);
         $this->parameters[$name] = $value;
 
         return ':' . $name;
