@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psi\Component\ObjectAgent\Tests\Unit\Query;
 
 use Psi\Component\ObjectAgent\Query\Comparison;

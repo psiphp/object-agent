@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psi\Component\ObjectAgent\Tests\Functional;
 
 use Psi\Component\ObjectAgent\Capabilities;

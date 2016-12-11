@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psi\Bridge\ObjectAgent\Doctrine\Orm\Tests\Functional;
 
 use Psi\Component\ObjectAgent\Tests\Functional\AgentTestTrait;

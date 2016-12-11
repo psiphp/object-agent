@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psi\Bridge\ObjectAgent\Doctrine\Orm\Tests\Functional;
 
 use Doctrine\ORM\EntityManager;

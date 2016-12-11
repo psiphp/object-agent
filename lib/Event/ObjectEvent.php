@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psi\Component\ObjectAgent\Event;
 
 use Psi\Component\ObjectAgent\AgentInterface;

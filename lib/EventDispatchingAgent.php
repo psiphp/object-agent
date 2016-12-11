@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psi\Component\ObjectAgent;
 
 use Psi\Component\ObjectAgent\Event\ObjectEvent;
