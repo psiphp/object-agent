@@ -36,9 +36,9 @@ class ExpressionVisitorTest extends OrmTestCase
         $this->assertInstanceOf(Comparison::class, $expr);
         $this->assertEquals($expectedOperator, $expr->getOperator());
         $this->assertEquals('a.title', $expr->getLeftExpr());
-        $this->assertEquals(':title', $expr->getRightExpr());
+        $this->assertEquals(':param0', $expr->getRightExpr());
         $params = $this->visitor->getParameters();
-        $this->assertEquals(42, $params['title']);
+        $this->assertEquals(42, $params['param0']);
     }
 
     public function provideComparator()
@@ -150,6 +150,41 @@ class ExpressionVisitorTest extends OrmTestCase
 
         $this->assertInstanceOf(Orx::class, $expr);
         $this->assertInstanceOf(Comparison::class, $expr->getParts()[0]);
+    }
+
+    /**
+     * It should allow an alternative source alias to be used.
+     */
+    public function testAlternativeSourceAlias()
+    {
+        $expr = $this->visitor->dispatch(
+            Query::comparison('eq', 'd.title', 42)
+        );
+
+        $this->assertEquals('d.title', $expr->getLeftExpr());
+    }
+
+    /**
+     * It should assign a unique name to each parameter.
+     */
+    public function testParamUnique()
+    {
+        $expr = $this->visitor->dispatch(
+            Query::composite('and',
+                Query::comparison('eq', 'd.title', 42),
+                Query::comparison('gt', 'd.amount', 42),
+                Query::comparison('lt', 'd.amount', 72)
+            )
+        );
+
+        $expressions = $expr->getParts();
+
+        $expr = array_shift($expressions);
+        $this->assertEquals(':param0', $expr->getRightExpr());
+        $expr = array_shift($expressions);
+        $this->assertEquals(':param1', $expr->getRightExpr());
+        $expr = array_shift($expressions);
+        $this->assertEquals(':param2', $expr->getRightExpr());
     }
 
     /**

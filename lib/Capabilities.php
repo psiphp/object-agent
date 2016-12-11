@@ -9,6 +9,8 @@ final class Capabilities
     private $supportedComparators;
     private $setParent;
     private $queryCount;
+    private $queryJoin;
+    private $querySelect;
 
     private function __construct()
     {
@@ -21,6 +23,8 @@ final class Capabilities
             'supported_comparators' => [],
             'can_set_parent' => false,
             'can_query_count' => false,
+            'can_query_join' => false,
+            'can_query_select' => false,
         ];
 
         if ($diff = array_diff(array_keys($capabilities), array_keys($defaults))) {
@@ -35,7 +39,9 @@ final class Capabilities
         $instance = new self();
         $instance->supportedComparators = (array) $capabilities['supported_comparators'];
         $instance->setParent = (bool) $capabilities['can_set_parent'];
+        $instance->queryJoin = (bool) $capabilities['can_query_join'];
         $instance->queryCount = (bool) $capabilities['can_query_count'];
+        $instance->querySelect = (bool) $capabilities['can_query_select'];
 
         return $instance;
     }
@@ -53,5 +59,15 @@ final class Capabilities
     public function canQueryCount(): bool
     {
         return $this->queryCount;
+    }
+
+    public function canQueryJoin(): bool
+    {
+        return $this->queryJoin;
+    }
+
+    public function canQuerySelect(): bool
+    {
+        return $this->querySelect;
     }
 }
