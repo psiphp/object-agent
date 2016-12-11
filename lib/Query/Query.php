@@ -75,6 +75,21 @@ final class Query
         return new Join($type, $alias);
     }
 
+    public function cloneWith(array $parts)
+    {
+        return self::create(
+            $this->getClassFqn(),
+            [
+                'selects' => isset($parts['selects']) ? $parts['selects'] : $this->selects,
+                'criteria' => isset($parts['criteria']) ? $parts['criteria'] : $this->expression,
+                'orderings' => isset($parts['orderings']) ? $parts['orderings'] : $this->orderings,
+                'joins' => isset($parts['joins']) ? $parts['joins'] : $this->joins,
+                'firstResult' => isset($parts['firstResult']) ? $parts['firstResult'] : $this->firstResult,
+                'maxResults' => isset($parts['maxResults']) ? $parts['maxResults'] : $this->maxResults,
+            ]
+        );
+    }
+
     public function getClassFqn(): string
     {
         return $this->classFqn;

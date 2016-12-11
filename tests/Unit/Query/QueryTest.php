@@ -44,4 +44,65 @@ class QueryTest extends \PHPUnit_Framework_TestCase
             'asd' => 'basd',
         ]);
     }
+
+    /**
+     * It should clone the query.
+     *
+     * @dataProvider provideCloneQuery
+     */
+    public function testCloneQuery(array $parts)
+    {
+        $base = [
+            'selects' => [ 'one', 'two' ],
+            'orderings' => [ 'foo' => 'asc' ],
+            'joins' => [ new Join('foobar', 'barfoo') ],
+            'criteria' => Query::comparison('eq', 'f.foobar', 'bar'),
+            'maxResults' => 10,
+            'firstResult' => 5,
+        ];
+        $expected = array_merge($base, $parts);
+
+        $query = Query::create(\stdClass::class, $base);
+        $cloned = $query->cloneWith($parts);
+
+        $this->assertNotSame($query, $cloned);
+        $this->assertEquals($expected['selects'], $cloned->getSelects());
+        $this->assertEquals($expected['orderings'], $cloned->getOrderings());
+        $this->assertEquals($expected['joins'], $cloned->getJoins());
+        $this->assertEquals($expected['criteria'], $cloned->getExpression());
+        $this->assertEquals($expected['maxResults'], $cloned->getMaxResults());
+        $this->assertEquals($expected['firstResult'], $cloned->getFirstResult());
+    }
+
+    public function provideCloneQuery()
+    {
+        return [
+            [
+                [
+                    'select' => [ 'three', 'four' ],
+                ]
+            ],
+            [
+                [
+                    'orderings' => [ 'three' => 'asc', 'four' => 'desc' ],
+                ]
+            ],
+            [
+                [
+                    'joins' => [ new Join('barfoo', 'barbar') ],
+                ]
+            ],
+            [
+                [
+                    'criteria' => Query::comparison('gt', 'f.foobar', 10),
+                ]
+            ],
+            [
+                [
+                    'firstResult' => 99,
+                    'maxResults' => 1000,
+                ]
+            ],
+        ];
+    }
 }
