@@ -1,27 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psi\Component\ObjectAgent\Tests\Unit\Query\Converter;
 
-use Psi\Component\ObjectAgent\Query\Converter\ArrayConverter;
-use Psi\Component\ObjectAgent\Query\Query;
-use Psi\Component\ObjectAgent\Query\Composite;
 use Psi\Component\ObjectAgent\Query\Comparison;
+use Psi\Component\ObjectAgent\Query\Composite;
+use Psi\Component\ObjectAgent\Query\Converter\ArrayConverter;
 use Psi\Component\ObjectAgent\Query\Expression;
 use Psi\Component\ObjectAgent\Query\Join;
+use Psi\Component\ObjectAgent\Query\Query;
 
 class ArrayConverterTest extends \PHPUnit_Framework_TestCase
-
 {
     /**
      * It should produce a query.
      */
     public function testQuery()
     {
-        $orderings = [ 'foo' => 'asc' ];
-        $selects = [ 'a.foobar' => 'foobar' ];
+        $orderings = ['foo' => 'asc'];
+        $selects = ['a.foobar' => 'foobar'];
         $query = (new ArrayConverter())->__invoke([
             'from' => \stdClass::class,
-            'joins' => [ [ "join" => "f.foobar", "alias" => "f" ] ],
+            'joins' => [['join' => 'f.foobar', 'alias' => 'f']],
             'selects' => $selects,
             'orderings' => $orderings,
             'firstResult' => 5,
@@ -34,7 +35,7 @@ class ArrayConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(10, $query->getMaxResults());
 
         $this->assertEquals([
-            new Join('f.foobar', 'f')
+            new Join('f.foobar', 'f'),
         ], $query->getJoins());
     }
 
@@ -60,7 +61,7 @@ class ArrayConverterTest extends \PHPUnit_Framework_TestCase
     {
         (new ArrayConverter())->__invoke([
             'from' => \stdClass::class,
-            'criteria' => [ 'eq' => 'foo',]
+            'criteria' => ['eq' => 'foo'],
         ]);
     }
 
@@ -68,13 +69,13 @@ class ArrayConverterTest extends \PHPUnit_Framework_TestCase
      * It should throw an exception if an invalid operator is encountered.
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown expression operator 
+     * @expectedExceptionMessage Unknown expression operator
      */
     public function testThrowExceptionInvalidOperator()
     {
         (new ArrayConverter())->__invoke([
             'from' => \stdClass::class,
-            'criteria' => [ 'and' => [ 'eq' => [ 'foo' => 'bar' ]], 'or' => [ 'eq' => [ 'boo' => 'baz' ]], 'asd' => [] ],
+            'criteria' => ['and' => ['eq' => ['foo' => 'bar']], 'or' => ['eq' => ['boo' => 'baz']], 'asd' => []],
         ]);
     }
 
@@ -93,9 +94,9 @@ class ArrayConverterTest extends \PHPUnit_Framework_TestCase
             [
                 [
                     'and' => [
-                        'eq' => [ 'foo' => 'bar' ],
-                        'lt' => [ 'foo' => 62 ],
-                    ]
+                        'eq' => ['foo' => 'bar'],
+                        'lt' => ['foo' => 62],
+                    ],
                 ],
                 Query::composite(
                     Composite::AND,
@@ -104,13 +105,13 @@ class ArrayConverterTest extends \PHPUnit_Framework_TestCase
                         Query::comparison(Comparison::EQUALS, 'foo', 'bar'),
                         Query::comparison(Comparison::LESS_THAN, 'foo', 62)
                     )
-                )
+                ),
             ],
             [
                 [
                     'or' => [
-                        'eq' => [ 'foo' => 'bar' ],
-                    ]
+                        'eq' => ['foo' => 'bar'],
+                    ],
                 ],
                 Query::composite(
                     Composite::AND,
@@ -118,27 +119,27 @@ class ArrayConverterTest extends \PHPUnit_Framework_TestCase
                         Composite::OR,
                         Query::comparison(Comparison::EQUALS, 'foo', 'bar')
                     )
-                )
+                ),
             ],
             [
                 [
-                    'eq' => [ 'foo' => 'bar' ],
+                    'eq' => ['foo' => 'bar'],
                 ],
                 Query::composite(
                     Composite::AND,
                     Query::comparison(Comparison::EQUALS, 'foo', 'bar')
-                )
+                ),
             ],
             [
                 [
-                    'eq' => [ 'foo' => 'bar', 'bar' => 'bar', 'zar' => 'bar' ],
+                    'eq' => ['foo' => 'bar', 'bar' => 'bar', 'zar' => 'bar'],
                 ],
                 Query::composite(
                     Composite::AND,
                     Query::comparison(Comparison::EQUALS, 'foo', 'bar'),
                     Query::comparison(Comparison::EQUALS, 'bar', 'bar'),
                     Query::comparison(Comparison::EQUALS, 'zar', 'bar')
-                )
+                ),
             ],
         ];
     }

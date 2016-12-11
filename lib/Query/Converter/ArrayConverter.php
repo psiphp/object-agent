@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Psi\Component\ObjectAgent\Query\Converter;
 
 use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Composite;
-use Psi\Component\ObjectAgent\Query\Query;
 use Psi\Component\ObjectAgent\Query\Join;
+use Psi\Component\ObjectAgent\Query\Query;
 
 class ArrayConverter
 {
@@ -67,7 +69,7 @@ class ArrayConverter
                 'type' => Join::INNER_JOIN,
                 'join'=> null,
                 'alias' => null,
-            ], $join, [ 'join', 'alias']);
+            ], $join, ['join', 'alias']);
 
             $joinObjects[] = new Join($join['join'], $join['alias'], $join['type']);
         }
@@ -119,7 +121,7 @@ class ArrayConverter
         if ($diff = array_diff($required, array_keys($values))) {
             throw new \InvalidArgumentException(sprintf(
                 'Keys "%s" are required for "%s"',
-                implode('", "', $diff),  json_encode($values)
+                implode('", "', $diff), json_encode($values)
             ));
         }
 

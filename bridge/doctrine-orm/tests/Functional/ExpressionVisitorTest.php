@@ -170,7 +170,7 @@ class ExpressionVisitorTest extends OrmTestCase
     public function testParamUnique()
     {
         $expr = $this->visitor->dispatch(
-            Query::composite('and', 
+            Query::composite('and',
                 Query::comparison('eq', 'd.title', 42),
                 Query::comparison('gt', 'd.amount', 42),
                 Query::comparison('lt', 'd.amount', 72)
@@ -178,7 +178,7 @@ class ExpressionVisitorTest extends OrmTestCase
         );
 
         $expressions = $expr->getParts();
-        
+
         $expr = array_shift($expressions);
         $this->assertEquals(':param0', $expr->getRightExpr());
         $expr = array_shift($expressions);

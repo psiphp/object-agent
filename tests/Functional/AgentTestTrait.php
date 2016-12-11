@@ -8,8 +8,8 @@ use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Query;
-use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
 use Psi\Component\ObjectAgent\Tests\Functional\Model\Comment;
+use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
 
 trait AgentTestTrait
 {
@@ -124,7 +124,7 @@ trait AgentTestTrait
            'criteria' => Query::composite(
                 'and',
                 Query::comparison('eq', 'title', 'Hello')
-            )
+            ),
         ]);
         $results = $this->agent->query($query);
         $this->assertCount(1, $results);
@@ -139,8 +139,8 @@ trait AgentTestTrait
         if (false === $this->agent->getCapabilities()->canQueryCount()) {
             $this->setExpectedException(BadMethodCallException::class);
             $query = Query::create(Page::class, [
-                'firstResult' => 1, 
-                'maxResults' => 2
+                'firstResult' => 1,
+                'maxResults' => 2,
             ]);
             $this->assertEquals(4, $this->agent->queryCount($query));
 
@@ -153,8 +153,8 @@ trait AgentTestTrait
         $this->createPage('Barfood');
 
         $query = Query::create(Page::class, [
-            'firstResult' => 1, 
-            'maxResults' => 2
+            'firstResult' => 1,
+            'maxResults' => 2,
         ]);
         $this->assertEquals(4, $this->agent->queryCount($query));
     }
@@ -183,8 +183,8 @@ trait AgentTestTrait
         $this->createPage('aaaa');
         $this->createPage('zzzz');
         $query = Query::create(Page::class, [
-            'firstResult' => 0, 
-            'maxResults' => 2
+            'firstResult' => 0,
+            'maxResults' => 2,
         ]);
         $results = $this->agent->query($query);
         $this->assertCount(2, $results);
@@ -200,8 +200,8 @@ trait AgentTestTrait
         $this->createPage('aaaa');
         $this->createPage('zzzz');
         $query = Query::create(Page::class, [
-            'firstResult' => 3, 
-            'maxResults' => 2
+            'firstResult' => 3,
+            'maxResults' => 2,
         ]);
         $results = $this->agent->query($query);
         $this->assertCount(1, $results);
@@ -217,7 +217,7 @@ trait AgentTestTrait
         $this->createPage('aaaa');
         $this->createPage('zzzz');
         $query = Query::create(Page::class, [
-            'orderings' => [ 'title' => 'desc' ],
+            'orderings' => ['title' => 'desc'],
         ]);
         $results = $this->agent->query($query);
         $first = $results->first();
@@ -228,6 +228,7 @@ trait AgentTestTrait
     {
         if (false === $this->agent->getCapabilities()->canQueryJoin()) {
             $this->markTestSkipped('Not supported');
+
             return;
         }
 
@@ -236,8 +237,8 @@ trait AgentTestTrait
         $this->clearManager();
 
         $query = Query::create(Comment::class, [
-            'selects' => [ 'a' => 'comment', 'p.title' => 'title' ],
-            'joins' => [ Query::join('a.page', 'p') ],
+            'selects' => ['a' => 'comment', 'p.title' => 'title'],
+            'joins' => [Query::join('a.page', 'p')],
         ]);
 
         $result = $this->agent->query($query);
@@ -249,6 +250,7 @@ trait AgentTestTrait
     {
         if (false === $this->agent->getCapabilities()->canQuerySelect()) {
             $this->markTestSkipped('Not supported');
+
             return;
         }
 
@@ -257,14 +259,13 @@ trait AgentTestTrait
         $this->clearManager();
 
         $query = Query::create(Comment::class, [
-            'selects' => [ 'a' => 'comment', 'a.title' => 'title' ],
+            'selects' => ['a' => 'comment', 'a.title' => 'title'],
         ]);
 
         $result = $this->agent->query($query);
         $this->assertCount(1, $result);
         $this->assertEquals('hello world', $result[0]['title']);
     }
-
 
     private function clearManager()
     {

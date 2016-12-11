@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Psi\Component\ObjectAgent\Query;
 
-use Psi\Component\ObjectAgent\Query\Join;
-
 final class Query
 {
     private $classFqn;

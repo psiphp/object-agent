@@ -8,17 +8,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query as OrmQuery;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Psi\Component\ObjectAgent\AgentInterface;
 use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Comparison;
-use Psi\Component\ObjectAgent\Query\Query;
 use Psi\Component\ObjectAgent\Query\Join;
-use Doctrine\ORM\Query\Expr\Select;
+use Psi\Component\ObjectAgent\Query\Query;
 
 class OrmAgent implements AgentInterface
 {
@@ -205,7 +203,7 @@ class OrmAgent implements AgentInterface
         // TODO: Make a clone method on the Query, which allows passing an
         //       array of parts to replace in the clone.
         $query = Query::create($query->getClassFqn(), [
-            'selects' => [ 'count(' . self::SOURCE_ALIAS . '.' . $idField . ')' ],
+            'selects' => ['count(' . self::SOURCE_ALIAS . '.' . $idField . ')'],
             'joins' => $query->getJoins(),
             'criteria' => $query->hasExpression() ? $query->getExpression() : null,
         ]);

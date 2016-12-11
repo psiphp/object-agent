@@ -118,7 +118,7 @@ class EventDispatchingAgentTest extends \PHPUnit_Framework_TestCase
     public function testDelegateQuery()
     {
         $query = Query::create(\stdClass::class, [
-            'criteria' => Query::comparison('eq', 'bar', 1)
+            'criteria' => Query::comparison('eq', 'bar', 1),
         ]);
         $this->innerAgent->query($query)->shouldBeCalled();
 

@@ -6,12 +6,12 @@ namespace Psi\Component\ObjectAgent\Query;
 
 class Join
 {
-    const INNER_JOIN    = 'INNER';
-    const LEFT_JOIN     = 'LEFT';
+    const INNER_JOIN = 'INNER';
+    const LEFT_JOIN = 'LEFT';
 
     private static $validTypes = [
         self::INNER_JOIN,
-        self::LEFT_JOIN
+        self::LEFT_JOIN,
     ];
 
     /**
@@ -44,17 +44,17 @@ class Join
         $this->join = $join;
     }
 
-    public function getType() 
+    public function getType()
     {
         return $this->type;
     }
 
-    public function getAlias() 
+    public function getAlias()
     {
         return $this->alias;
     }
 
-    public function getJoin() 
+    public function getJoin()
     {
         return $this->join;
     }

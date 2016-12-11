@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Psi\Bridge\ObjectAgent\Doctrine\Orm\Tests\Functional;
 
 use Psi\Component\ObjectAgent\Tests\Functional\AgentTestTrait;
-use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
 use Psi\Component\ObjectAgent\Tests\Functional\Model\Comment;
+use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
 
 class OrmAgentTest extends OrmTestCase
 {

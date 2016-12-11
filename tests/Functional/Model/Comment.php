@@ -1,8 +1,8 @@
 <?php
 
-namespace Psi\Component\ObjectAgent\Tests\Functional\Model;
+declare(strict_types=1);
 
-use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
+namespace Psi\Component\ObjectAgent\Tests\Functional\Model;
 
 class Comment
 {
@@ -16,4 +16,3 @@ class Comment
         $this->title = $title;
     }
 }
-
