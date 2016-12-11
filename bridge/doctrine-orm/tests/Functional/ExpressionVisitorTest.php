@@ -36,9 +36,9 @@ class ExpressionVisitorTest extends OrmTestCase
         $this->assertInstanceOf(Comparison::class, $expr);
         $this->assertEquals($expectedOperator, $expr->getOperator());
         $this->assertEquals('a.title', $expr->getLeftExpr());
-        $this->assertEquals(':title', $expr->getRightExpr());
+        $this->assertEquals(':param0', $expr->getRightExpr());
         $params = $this->visitor->getParameters();
-        $this->assertEquals(42, $params['title']);
+        $this->assertEquals(42, $params['param0']);
     }
 
     public function provideComparator()
@@ -165,15 +165,26 @@ class ExpressionVisitorTest extends OrmTestCase
     }
 
     /**
-     * It should replace "." in parameter token names.
+     * It should assign a unique name to each parameter.
      */
-    public function testReplaceParameterTokenDots()
+    public function testParamUnique()
     {
         $expr = $this->visitor->dispatch(
-            Query::comparison('eq', 'd.title', 42)
+            Query::composite('and', 
+                Query::comparison('eq', 'd.title', 42),
+                Query::comparison('gt', 'd.amount', 42),
+                Query::comparison('lt', 'd.amount', 72)
+            )
         );
 
-        $this->assertEquals(':d_title', $expr->getRightExpr());
+        $expressions = $expr->getParts();
+        
+        $expr = array_shift($expressions);
+        $this->assertEquals(':param0', $expr->getRightExpr());
+        $expr = array_shift($expressions);
+        $this->assertEquals(':param1', $expr->getRightExpr());
+        $expr = array_shift($expressions);
+        $this->assertEquals(':param2', $expr->getRightExpr());
     }
 
     /**

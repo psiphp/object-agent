@@ -15,6 +15,7 @@ class ExpressionVisitor
     private $sourceAlias;
 
     private $parameters = [];
+    private $paramIndex = 0;
 
     public function __construct(Expr $expressionFactory, string $sourceAlias)
     {
@@ -117,10 +118,7 @@ class ExpressionVisitor
 
     private function registerParameter(string $name, $value)
     {
-        // parameter tokens are named after the field name, which may be prefixed
-        // with a source selector, replace "." with "_"
-        $name = str_replace('.', '_', $name);
-
+        $name = 'param' . $this->paramIndex++;
         $this->parameters[$name] = $value;
 
         return ':' . $name;
