@@ -15,14 +15,14 @@ class QueryTest extends \PHPUnit_Framework_TestCase
             'selects' => ['f.bar' => 'foo'],
             'joins' => [Query::join('f.foobar', 'b')],
             'criteria' => $expr = Query::composite('and',
-                Query::comparison('eq', 'f.foo', 'bar'),
-                Query::comparison('gt', 'f.price', 100),
-                Query::composite('or',
-                    Query::comparison('lte', 123, 12),
-                    Query::comparison('eq', 12, 12)
-                )
-            ),
-        ]);
+            Query::comparison('eq', 'f.foo', 'bar'),
+            Query::comparison('gt', 'f.price', 100),
+            Query::composite('or',
+            Query::comparison('lte', 123, 12),
+            Query::comparison('eq', 12, 12)
+        )
+    ),
+]);
 
         $this->assertInstanceOf(Query::class, $query);
         $this->assertEquals(\stdClass::class, $query->getClassFqn());

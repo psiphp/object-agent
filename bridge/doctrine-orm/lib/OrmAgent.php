@@ -200,12 +200,10 @@ class OrmAgent implements AgentInterface
 
         $idField = reset($identifierFields);
 
-        // TODO: Make a clone method on the Query, which allows passing an
-        //       array of parts to replace in the clone.
-        $query = Query::create($query->getClassFqn(), [
+        $query = $query->cloneWith([
             'selects' => ['count(' . self::SOURCE_ALIAS . '.' . $idField . ')'],
-            'joins' => $query->getJoins(),
-            'criteria' => $query->hasExpression() ? $query->getExpression() : null,
+            'firstResult' => null,
+            'maxResults' => null
         ]);
 
         $queryBuilder = $this->getQueryBuilder($query);

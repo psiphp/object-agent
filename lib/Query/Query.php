@@ -80,12 +80,12 @@ final class Query
         return self::create(
             $this->getClassFqn(),
             [
-                'selects' => isset($parts['selects']) ? $parts['selects'] : $this->selects,
-                'criteria' => isset($parts['criteria']) ? $parts['criteria'] : $this->expression,
-                'orderings' => isset($parts['orderings']) ? $parts['orderings'] : $this->orderings,
-                'joins' => isset($parts['joins']) ? $parts['joins'] : $this->joins,
-                'firstResult' => isset($parts['firstResult']) ? $parts['firstResult'] : $this->firstResult,
-                'maxResults' => isset($parts['maxResults']) ? $parts['maxResults'] : $this->maxResults,
+                'selects' => array_key_exists('selects', $parts) ? $parts['selects'] : $this->selects,
+                'criteria' => array_key_exists('criteria', $parts) ? $parts['criteria'] : $this->expression,
+                'orderings' => array_key_exists('orderings', $parts) ? $parts['orderings'] : $this->orderings,
+                'joins' => array_key_exists('joins', $parts) ? $parts['joins'] : $this->joins,
+                'firstResult' => array_key_exists('firstResult', $parts) ? $parts['firstResult'] : $this->firstResult,
+                'maxResults' => array_key_exists('maxResults', $parts) ? $parts['maxResults'] : $this->maxResults,
             ]
         );
     }
