@@ -36,7 +36,7 @@ class CollectionsAgent implements AgentInterface
     public function getCapabilities(): Capabilities
     {
         return Capabilities::create([
-            'can_join' => false,
+            'can_query_join' => false,
             'can_set_parent' => false,
             'can_query_count' => true,
             'supported_comparators' => [

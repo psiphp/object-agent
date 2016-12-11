@@ -53,9 +53,9 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     public function testCloneQuery(array $parts)
     {
         $base = [
-            'selects' => [ 'one', 'two' ],
-            'orderings' => [ 'foo' => 'asc' ],
-            'joins' => [ new Join('foobar', 'barfoo') ],
+            'selects' => ['one', 'two'],
+            'orderings' => ['foo' => 'asc'],
+            'joins' => [new Join('foobar', 'barfoo')],
             'criteria' => Query::comparison('eq', 'f.foobar', 'bar'),
             'maxResults' => 10,
             'firstResult' => 5,
@@ -79,29 +79,29 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 [
-                    'select' => [ 'three', 'four' ],
-                ]
+                    'select' => ['three', 'four'],
+                ],
             ],
             [
                 [
-                    'orderings' => [ 'three' => 'asc', 'four' => 'desc' ],
-                ]
+                    'orderings' => ['three' => 'asc', 'four' => 'desc'],
+                ],
             ],
             [
                 [
-                    'joins' => [ new Join('barfoo', 'barbar') ],
-                ]
+                    'joins' => [new Join('barfoo', 'barbar')],
+                ],
             ],
             [
                 [
                     'criteria' => Query::comparison('gt', 'f.foobar', 10),
-                ]
+                ],
             ],
             [
                 [
                     'firstResult' => 99,
                     'maxResults' => 1000,
-                ]
+                ],
             ],
         ];
     }

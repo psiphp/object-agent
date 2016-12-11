@@ -203,7 +203,7 @@ class OrmAgent implements AgentInterface
         $query = $query->cloneWith([
             'selects' => ['count(' . self::SOURCE_ALIAS . '.' . $idField . ')'],
             'firstResult' => null,
-            'maxResults' => null
+            'maxResults' => null,
         ]);
 
         $queryBuilder = $this->getQueryBuilder($query);
@@ -227,7 +227,10 @@ class OrmAgent implements AgentInterface
 
     private function getQueryBuilder(Query $query): QueryBuilder
     {
-        $queryBuilder = $this->entityManager->getRepository($query->getClassFqn())->createQueryBuilder(self::SOURCE_ALIAS);
+        $queryBuilder = $this->entityManager->getRepository(
+            $query->getClassFqn()
+        )->createQueryBuilder(self::SOURCE_ALIAS);
+
         $visitor = new ExpressionVisitor(
             $queryBuilder->expr(),
             self::SOURCE_ALIAS
@@ -242,9 +245,13 @@ class OrmAgent implements AgentInterface
         $selects = [];
         foreach ($query->getSelects() as $selectName => $selectAlias) {
             $select = $selectName . ' ' . $selectAlias;
+
+            // if the "index" is numeric, then assume that the value is the
+            // name and that no alias is being used.
             if (is_int($selectName)) {
                 $select = $selectAlias;
             }
+
             $selects[] = $select;
         }
 

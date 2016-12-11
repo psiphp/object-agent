@@ -25,7 +25,6 @@ final class Capabilities
             'can_query_count' => false,
             'can_query_join' => false,
             'can_query_select' => false,
-            'can_join' => false,
         ];
 
         if ($diff = array_diff(array_keys($capabilities), array_keys($defaults))) {
