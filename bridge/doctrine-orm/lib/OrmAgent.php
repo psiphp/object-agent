@@ -187,6 +187,62 @@ class OrmAgent implements AgentInterface
     {
         $queryBuilder = $this->getQueryBuilder($query);
 
+        return new ArrayCollection(
+            $queryBuilder->getQuery()->execute()
+        );
+    }
+
+    public function queryCount(Query $query): int
+    {
+        $metadata = $this->entityManager->getMetadataFactory()->getMetadataFor(
+            ClassUtils::getRealClass($query->getClassFqn())
+        );
+
+        $identifierFields = $metadata->getIdentifier();
+
+        $idField = reset($identifierFields);
+
+        // TODO: Make a clone method on the Query, which allows passing an
+        //       array of parts to replace in the clone.
+        $query = Query::create($query->getClassFqn(), [
+            'selects' => [ 'count(' . self::SOURCE_ALIAS . '.' . $idField . ')' ],
+            'joins' => $query->getJoins(),
+            'criteria' => $query->hasExpression() ? $query->getExpression() : null,
+        ]);
+
+        $queryBuilder = $this->getQueryBuilder($query);
+        $count = (int) $queryBuilder->getQuery()->getSingleScalarResult();
+
+        return $count;
+    }
+
+    /**
+     * Return the entity manager instance (for use in events).
+     */
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return $this->entityManager;
+    }
+
+    private function clearManager()
+    {
+        $this->entityManager->clear();
+    }
+
+    private function getQueryBuilder(Query $query): QueryBuilder
+    {
+        $queryBuilder = $this->entityManager->getRepository($query->getClassFqn())->createQueryBuilder(self::SOURCE_ALIAS);
+        $visitor = new ExpressionVisitor(
+            $queryBuilder->expr(),
+            self::SOURCE_ALIAS
+        );
+
+        if ($query->hasExpression()) {
+            $expr = $visitor->dispatch($query->getExpression());
+            $queryBuilder->where($expr);
+            $queryBuilder->setParameters($visitor->getParameters());
+        }
+
         $selects = [];
         foreach ($query->getSelects() as $selectName => $selectAlias) {
             $select = $selectName . ' ' . $selectAlias;
@@ -221,46 +277,6 @@ class OrmAgent implements AgentInterface
 
         if (null !== $query->getMaxResults()) {
             $queryBuilder->setMaxResults($query->getMaxResults());
-        }
-
-        return new ArrayCollection(
-            $queryBuilder->getQuery()->execute()
-        );
-    }
-
-    public function queryCount(Query $query): int
-    {
-        $queryBuilder = $this->getQueryBuilder($query);
-        $paginator = new Paginator($queryBuilder->getQuery());
-
-        return count($paginator);
-    }
-
-    /**
-     * Return the entity manager instance (for use in events).
-     */
-    public function getEntityManager(): EntityManagerInterface
-    {
-        return $this->entityManager;
-    }
-
-    private function clearManager()
-    {
-        $this->entityManager->clear();
-    }
-
-    private function getQueryBuilder(Query $query): QueryBuilder
-    {
-        $queryBuilder = $this->entityManager->getRepository($query->getClassFqn())->createQueryBuilder(self::SOURCE_ALIAS);
-        $visitor = new ExpressionVisitor(
-            $queryBuilder->expr(),
-            self::SOURCE_ALIAS
-        );
-
-        if ($query->hasExpression()) {
-            $expr = $visitor->dispatch($query->getExpression());
-            $queryBuilder->where($expr);
-            $queryBuilder->setParameters($visitor->getParameters());
         }
 
         return $queryBuilder;
