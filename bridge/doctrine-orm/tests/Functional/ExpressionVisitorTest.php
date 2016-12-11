@@ -153,6 +153,30 @@ class ExpressionVisitorTest extends OrmTestCase
     }
 
     /**
+     * It should allow an alternative source alias to be used.
+     */
+    public function testAlternativeSourceAlias()
+    {
+        $expr = $this->visitor->dispatch(
+            Query::comparison('eq', 'd.title', 42)
+        );
+
+        $this->assertEquals('d.title', $expr->getLeftExpr());
+    }
+
+    /**
+     * It should replace "." in parameter token names.
+     */
+    public function testReplaceParameterTokenDots()
+    {
+        $expr = $this->visitor->dispatch(
+            Query::comparison('eq', 'd.title', 42)
+        );
+
+        $this->assertEquals(':d_title', $expr->getRightExpr());
+    }
+
+    /**
      * Test nested composites.
      */
     public function testNestedComposites()

@@ -106,15 +106,21 @@ class ExpressionVisitor
 
     private function getField($field): string
     {
-        if (strpos($field, '.') !== 0) {
+        // if a source alias has been used, then use that
+        if (false !== strpos($field, '.')) {
             return $field;
         }
+
+        // otherwise use the primary source alias.
         return $this->sourceAlias . '.' . $field;
     }
 
     private function registerParameter(string $name, $value)
     {
+        // parameter tokens are named after the field name, which may be prefixed
+        // with a source selector, replace "." with "_"
         $name = str_replace('.', '_', $name);
+
         $this->parameters[$name] = $value;
 
         return ':' . $name;
