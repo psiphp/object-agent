@@ -39,6 +39,8 @@ class ArrayConverter
             'criteria' => null,
             'orderings' => [],
             'joins' => [],
+            'having' => [],
+            'groupBys' => [],
             'firstResult' => null,
             'maxResults' => null,
         ], $query);
@@ -51,6 +53,10 @@ class ArrayConverter
 
         if ($query['criteria']) {
             $query['criteria'] = new Composite(Composite::AND, $this->walkCriteria($query['criteria']));
+        }
+
+        if ($query['having']) {
+            $query['having'] = new Composite(Composite::AND, $this->walkCriteria($query['having']));
         }
 
         $query['joins'] = $this->walkJoins($query['joins']);
