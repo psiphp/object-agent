@@ -111,7 +111,7 @@ final class Query
                 'orderings' => array_key_exists('orderings', $parts) ? $parts['orderings'] : $this->orderings,
                 'joins' => array_key_exists('joins', $parts) ? $parts['joins'] : $this->joins,
                 'having' => array_key_exists('joins', $parts) ? $parts['having'] : $this->having,
-                'groupBy' => array_key_exists('groupBy', $parts) ? $parts['groupBy'] : $this->groupBy,
+                'groupBys' => array_key_exists('groupBys', $parts) ? $parts['groupBys'] : $this->groupBys,
                 'firstResult' => array_key_exists('firstResult', $parts) ? $parts['firstResult'] : $this->firstResult,
                 'maxResults' => array_key_exists('maxResults', $parts) ? $parts['maxResults'] : $this->maxResults,
             ]
