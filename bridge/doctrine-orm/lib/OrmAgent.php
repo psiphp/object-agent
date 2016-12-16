@@ -43,6 +43,7 @@ class OrmAgent implements AgentInterface
             'can_query_select' => true,
             'can_set_parent' => false,
             'can_query_count' => true,
+            'can_query_having' => true,
             'supported_comparators' => [
                 Comparison::EQUALS,
                 Comparison::NOT_EQUALS,
@@ -234,7 +235,6 @@ class OrmAgent implements AgentInterface
         if ($query->hasExpression()) {
             $expr = $visitor->dispatch($query->getExpression());
             $queryBuilder->where($expr);
-            $queryBuilder->setParameters($visitor->getParameters());
         }
 
         $selects = [];
@@ -265,8 +265,18 @@ class OrmAgent implements AgentInterface
             }
         }
 
+        if ($query->hasHaving()) {
+            $expr = $visitor->dispatch($query->getHaving()->getExpression());
+            $res = $this->_getReducedDQLQueryPart($expr);
+            $queryBuilder->having($res);
+        }
+
         foreach ($query->getOrderings() as $field => $order) {
             $queryBuilder->addOrderBy(self::SOURCE_ALIAS . '.' . $field, $order);
+        }
+
+        foreach ($query->getGroupBys() as $groupBy) {
+            $queryBuilder->addGroupBy($groupBy);
         }
 
         if (null !== $query->getFirstResult()) {
@@ -277,6 +287,22 @@ class OrmAgent implements AgentInterface
             $queryBuilder->setMaxResults($query->getMaxResults());
         }
 
+        $queryBuilder->setParameters($visitor->getParameters());
+
         return $queryBuilder;
+    }
+
+    /**
+     * TODO: Put this somewhere sensible .. maybe refactor above into a new class.
+     */
+    private function _getReducedDQLQueryPart($queryPart, $options = array())
+    {
+        if (empty($queryPart)) {
+            return (isset($options['empty']) ? $options['empty'] : '');
+        }
+
+        return (isset($options['pre']) ? $options['pre'] : '')
+             . (is_array($queryPart) ? implode($options['separator'], $queryPart) : $queryPart)
+             . (isset($options['post']) ? $options['post'] : '');
     }
 }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Psi\Component\ObjectAgent\Query;
 
+use Psi\Component\ObjectAgent\Query\Expression;
+use Psi\Component\ObjectAgent\Query\Having;
+
 final class Query
 {
     private $classFqn;
@@ -13,12 +16,16 @@ final class Query
     private $maxResults;
     private $joins;
     private $selects;
+    private $having;
+    private $groupBys;
 
     private function __construct(
         string $classFqn,
         array $selects = [],
         array $joins = [],
         Expression $expression = null,
+        Having $having = null,
+        array $groupBys = [],
         array $orderings = [],
         int $firstResult = null,
         int $maxResults = null
@@ -29,7 +36,9 @@ final class Query
         $this->firstResult = $firstResult;
         $this->maxResults = $maxResults;
         $this->joins = $joins;
+        $this->groupBys = $groupBys;
         $this->selects = $selects;
+        $this->having = $having;
 
         array_walk($joins, function (Join $join) {
         });
@@ -44,6 +53,8 @@ final class Query
             'criteria' => null,
             'orderings' => [],
             'joins' => [],
+            'having' => null,
+            'groupBys' => [],
             'firstResult' => null,
             'maxResults' => null,
         ];
@@ -57,7 +68,17 @@ final class Query
 
         $query = array_merge($defaults, $query);
 
-        return new self($classFqn, $query['selects'], $query['joins'], $query['criteria'], $query['orderings'], $query['firstResult'], $query['maxResults']);
+        return new self(
+            $classFqn,
+            $query['selects'],
+            $query['joins'],
+            $query['criteria'],
+            $query['having'],
+            $query['groupBys'],
+            $query['orderings'],
+            $query['firstResult'],
+            $query['maxResults']
+        );
     }
 
     public static function comparison(string $comparator, $value1, $value2): Comparison
@@ -75,6 +96,11 @@ final class Query
         return new Join($type, $alias);
     }
 
+    public static function having(Expression $expression)
+    {
+        return new Having($expression);
+    }
+
     public function cloneWith(array $parts)
     {
         return self::create(
@@ -84,6 +110,8 @@ final class Query
                 'criteria' => array_key_exists('criteria', $parts) ? $parts['criteria'] : $this->expression,
                 'orderings' => array_key_exists('orderings', $parts) ? $parts['orderings'] : $this->orderings,
                 'joins' => array_key_exists('joins', $parts) ? $parts['joins'] : $this->joins,
+                'having' => array_key_exists('joins', $parts) ? $parts['having'] : $this->having,
+                'groupBy' => array_key_exists('groupBy', $parts) ? $parts['groupBy'] : $this->groupBy,
                 'firstResult' => array_key_exists('firstResult', $parts) ? $parts['firstResult'] : $this->firstResult,
                 'maxResults' => array_key_exists('maxResults', $parts) ? $parts['maxResults'] : $this->maxResults,
             ]
@@ -128,5 +156,20 @@ final class Query
     public function getSelects(): array
     {
         return $this->selects;
+    }
+
+    public function getHaving(): Having
+    {
+        return $this->having;
+    }
+
+    public function hasHaving()
+    {
+        return null !== $this->having;
+    }
+    
+    public function getGroupBys(): array
+    {
+        return $this->groupBys;
     }
 }

@@ -10,6 +10,8 @@ use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Query;
 use Psi\Component\ObjectAgent\Tests\Functional\Model\Comment;
 use Psi\Component\ObjectAgent\Tests\Functional\Model\Page;
+use Psi\Component\ObjectAgent\Query\Comparison;
+use Psi\Component\ObjectAgent\Query\Composite;
 
 trait AgentTestTrait
 {
@@ -244,6 +246,32 @@ trait AgentTestTrait
         $result = $this->agent->query($query);
         $this->assertCount(1, $result);
         $this->assertEquals('Page title', $result[0]['title']);
+    }
+
+    public function testQueryHaving()
+    {
+        if (false === $this->agent->getCapabilities()->canQueryHaving()) {
+            $this->markTestSkipped('Not supported');
+
+            return;
+        }
+
+        $page = $this->createPage('Page title');
+        $this->clearManager();
+
+        $query = Query::create(Page::class, [
+            'selects' => ['(case a.title when \'Page title\' then 1 else 0 end)' => 'title'],
+            'groupBys' => [ 'a.id' ],
+            'having' => Query::having(Query::composite(Composite::AND,
+                Query::comparison(Comparison::EQUALS, 'title', 'Page title'),
+                Query::comparison(Comparison::EQUALS, 'title', 'Page title')
+            )),
+        ]);
+
+        $result = $this->agent->query($query);
+        $this->assertCount(1, $result);
+        $result = reset($result);
+        $this->assertEquals(1, $result[0]['title']);
     }
 
     public function testQuerySelect()

@@ -11,6 +11,7 @@ final class Capabilities
     private $queryCount;
     private $queryJoin;
     private $querySelect;
+    private $queryHaving;
 
     private function __construct()
     {
@@ -25,6 +26,7 @@ final class Capabilities
             'can_query_count' => false,
             'can_query_join' => false,
             'can_query_select' => false,
+            'can_query_having' => false,
         ];
 
         if ($diff = array_diff(array_keys($capabilities), array_keys($defaults))) {
@@ -42,6 +44,7 @@ final class Capabilities
         $instance->queryJoin = (bool) $capabilities['can_query_join'];
         $instance->queryCount = (bool) $capabilities['can_query_count'];
         $instance->querySelect = (bool) $capabilities['can_query_select'];
+        $instance->queryHaving = (bool) $capabilities['can_query_having'];
 
         return $instance;
     }
@@ -69,5 +72,10 @@ final class Capabilities
     public function canQuerySelect(): bool
     {
         return $this->querySelect;
+    }
+
+    public function canQueryHaving(): bool
+    {
+        return $this->queryHaving;
     }
 }
