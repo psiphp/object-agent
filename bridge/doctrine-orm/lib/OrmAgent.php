@@ -20,17 +20,22 @@ use Psi\Component\ObjectAgent\Query\Query;
 
 class OrmAgent implements AgentInterface
 {
-    const SOURCE_ALIAS = 'a';
-
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
 
+    /**
+     * @var QueryVisitor
+     */
+    private $queryVisitor;
+
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        QueryVisitor $queryVisitor = null
     ) {
         $this->entityManager = $entityManager;
+        $this->queryVisitor = $queryVisitor ?: new QueryVisitor($entityManager);
     }
 
     /**
@@ -201,7 +206,7 @@ class OrmAgent implements AgentInterface
         $idField = reset($identifierFields);
 
         $query = $query->cloneWith([
-            'selects' => ['count(' . self::SOURCE_ALIAS . '.' . $idField . ')'],
+            'selects' => ['count(' . QueryVisitor::FROM_ALIAS . '.' . $idField . ')'],
             'firstResult' => null,
             'maxResults' => null,
         ]);
@@ -222,61 +227,6 @@ class OrmAgent implements AgentInterface
 
     private function getQueryBuilder(Query $query): QueryBuilder
     {
-        $queryBuilder = $this->entityManager->getRepository(
-            $query->getClassFqn()
-        )->createQueryBuilder(self::SOURCE_ALIAS);
-
-        $visitor = new ExpressionVisitor(
-            $queryBuilder->expr(),
-            self::SOURCE_ALIAS
-        );
-
-        if ($query->hasExpression()) {
-            $expr = $visitor->dispatch($query->getExpression());
-            $queryBuilder->where($expr);
-            $queryBuilder->setParameters($visitor->getParameters());
-        }
-
-        $selects = [];
-        foreach ($query->getSelects() as $selectName => $selectAlias) {
-            $select = $selectName . ' ' . $selectAlias;
-
-            // if the "index" is numeric, then assume that the value is the
-            // name and that no alias is being used.
-            if (is_int($selectName)) {
-                $select = $selectAlias;
-            }
-
-            $selects[] = $select;
-        }
-
-        if (false === empty($selects)) {
-            $queryBuilder->select($selects);
-        }
-
-        foreach ($query->getJoins() as $join) {
-            switch ($join->getType()) {
-                case Join::INNER_JOIN:
-                    $queryBuilder->innerJoin($join->getJoin(), $join->getAlias());
-                    break;
-                case Join::LEFT_JOIN:
-                    $queryBuilder->leftJoin($join->getJoin(), $join->getAlias());
-                    break;
-            }
-        }
-
-        foreach ($query->getOrderings() as $field => $order) {
-            $queryBuilder->addOrderBy($field, $order);
-        }
-
-        if (null !== $query->getFirstResult()) {
-            $queryBuilder->setFirstResult($query->getFirstResult());
-        }
-
-        if (null !== $query->getMaxResults()) {
-            $queryBuilder->setMaxResults($query->getMaxResults());
-        }
-
-        return $queryBuilder;
+        return $this->queryVisitor->dispatch($query);
     }
 }
