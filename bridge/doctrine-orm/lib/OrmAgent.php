@@ -8,29 +8,32 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
 use Psi\Component\ObjectAgent\AgentInterface;
 use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Comparison;
-use Psi\Component\ObjectAgent\Query\Join;
 use Psi\Component\ObjectAgent\Query\Query;
 
 class OrmAgent implements AgentInterface
 {
-    const SOURCE_ALIAS = 'a';
-
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
 
+    /**
+     * @var PsiToOrmQueryBuilderConverter
+     */
+    private $queryConverter;
+
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        PsiToOrmQueryBuilderConverter $queryConverter = null
     ) {
         $this->entityManager = $entityManager;
+        $this->queryConverter = $queryConverter ?: new PsiToOrmQueryBuilderConverter($entityManager);
     }
 
     /**
@@ -201,7 +204,7 @@ class OrmAgent implements AgentInterface
         $idField = reset($identifierFields);
 
         $query = $query->cloneWith([
-            'selects' => ['count(' . self::SOURCE_ALIAS . '.' . $idField . ')'],
+            'selects' => ['count(' . PsiToOrmQueryBuilderConverter::FROM_ALIAS . '.' . $idField . ')'],
             'firstResult' => null,
             'maxResults' => null,
         ]);
@@ -222,61 +225,6 @@ class OrmAgent implements AgentInterface
 
     private function getQueryBuilder(Query $query): QueryBuilder
     {
-        $queryBuilder = $this->entityManager->getRepository(
-            $query->getClassFqn()
-        )->createQueryBuilder(self::SOURCE_ALIAS);
-
-        $visitor = new ExpressionVisitor(
-            $queryBuilder->expr(),
-            self::SOURCE_ALIAS
-        );
-
-        if ($query->hasExpression()) {
-            $expr = $visitor->dispatch($query->getExpression());
-            $queryBuilder->where($expr);
-            $queryBuilder->setParameters($visitor->getParameters());
-        }
-
-        $selects = [];
-        foreach ($query->getSelects() as $selectName => $selectAlias) {
-            $select = $selectName . ' ' . $selectAlias;
-
-            // if the "index" is numeric, then assume that the value is the
-            // name and that no alias is being used.
-            if (is_int($selectName)) {
-                $select = $selectAlias;
-            }
-
-            $selects[] = $select;
-        }
-
-        if (false === empty($selects)) {
-            $queryBuilder->select($selects);
-        }
-
-        foreach ($query->getJoins() as $join) {
-            switch ($join->getType()) {
-                case Join::INNER_JOIN:
-                    $queryBuilder->innerJoin($join->getJoin(), $join->getAlias());
-                    break;
-                case Join::LEFT_JOIN:
-                    $queryBuilder->leftJoin($join->getJoin(), $join->getAlias());
-                    break;
-            }
-        }
-
-        foreach ($query->getOrderings() as $field => $order) {
-            $queryBuilder->addOrderBy(self::SOURCE_ALIAS . '.' . $field, $order);
-        }
-
-        if (null !== $query->getFirstResult()) {
-            $queryBuilder->setFirstResult($query->getFirstResult());
-        }
-
-        if (null !== $query->getMaxResults()) {
-            $queryBuilder->setMaxResults($query->getMaxResults());
-        }
-
-        return $queryBuilder;
+        return $this->queryConverter->convert($query);
     }
 }
