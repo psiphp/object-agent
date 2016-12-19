@@ -8,14 +8,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
 use Psi\Component\ObjectAgent\AgentInterface;
 use Psi\Component\ObjectAgent\Capabilities;
 use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Comparison;
-use Psi\Component\ObjectAgent\Query\Join;
 use Psi\Component\ObjectAgent\Query\Query;
 
 class OrmAgent implements AgentInterface
@@ -26,16 +24,16 @@ class OrmAgent implements AgentInterface
     private $entityManager;
 
     /**
-     * @var QueryVisitor
+     * @var PsiToOrmQueryBuilderConverter
      */
-    private $queryVisitor;
+    private $queryConverter;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        QueryVisitor $queryVisitor = null
+        PsiToOrmQueryBuilderConverter $queryConverter = null
     ) {
         $this->entityManager = $entityManager;
-        $this->queryVisitor = $queryVisitor ?: new QueryVisitor($entityManager);
+        $this->queryConverter = $queryConverter ?: new PsiToOrmQueryBuilderConverter($entityManager);
     }
 
     /**
@@ -206,7 +204,7 @@ class OrmAgent implements AgentInterface
         $idField = reset($identifierFields);
 
         $query = $query->cloneWith([
-            'selects' => ['count(' . QueryVisitor::FROM_ALIAS . '.' . $idField . ')'],
+            'selects' => ['count(' . PsiToOrmQueryBuilderConverter::FROM_ALIAS . '.' . $idField . ')'],
             'firstResult' => null,
             'maxResults' => null,
         ]);
@@ -227,6 +225,6 @@ class OrmAgent implements AgentInterface
 
     private function getQueryBuilder(Query $query): QueryBuilder
     {
-        return $this->queryVisitor->dispatch($query);
+        return $this->queryConverter->convert($query);
     }
 }

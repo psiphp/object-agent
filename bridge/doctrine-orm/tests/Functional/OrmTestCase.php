@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use PhpBench\DependencyInjection\Container;
 
-class OrmTestCase extends \PHPUnit_Framework_TestCase
+abstract class OrmTestCase extends \PHPUnit_Framework_TestCase
 {
     protected function getContainer()
     {

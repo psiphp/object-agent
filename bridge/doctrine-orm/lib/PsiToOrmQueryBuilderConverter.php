@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Psi\Bridge\ObjectAgent\Doctrine\Orm;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder;
 use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Composite;
 use Psi\Component\ObjectAgent\Query\Expression;
-use Doctrine\ORM\QueryBuilder;
-use Psi\Component\ObjectAgent\Query\Query;
-use Doctrine\ORM\EntityManagerInterface;
 use Psi\Component\ObjectAgent\Query\Join;
+use Psi\Component\ObjectAgent\Query\Query;
 
-class QueryVisitor
+class PsiToOrmQueryBuilderConverter
 {
     const FROM_ALIAS = 'a';
 
@@ -26,9 +26,9 @@ class QueryVisitor
     }
 
     /**
-     * Walk the given expression to build up the ORM query builder.
+     * Convert the given Psi Query into a Doctrine ORM QueryBuilder instance.
      */
-    public function dispatch(Query $query): QueryBuilder
+    public function convert(Query $query): QueryBuilder
     {
         $queryBuilder = $this->entityManager
             ->getRepository($query->getClassFqn())
