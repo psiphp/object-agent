@@ -266,7 +266,7 @@ class OrmAgent implements AgentInterface
         }
 
         foreach ($query->getOrderings() as $field => $order) {
-            $queryBuilder->addOrderBy(self::SOURCE_ALIAS . '.' . $field, $order);
+            $queryBuilder->addOrderBy($field, $order);
         }
 
         if (null !== $query->getFirstResult()) {
