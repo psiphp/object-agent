@@ -167,10 +167,10 @@ class PsiToOrmQueryBuilderConverter
                 return $expressionFactory->notLike($this->getField($field), $this->registerParameter($queryBuilder, $value));
 
             case Comparison::NULL:
-                return $expressionFactory->isNull($this->getField($field), $this->registerParameter($queryBuilder, $value));
+                return $expressionFactory->isNull($this->getField($field));
 
             case Comparison::NOT_NULL:
-                return $expressionFactory->isNotNull($this->getField($field), $this->registerParameter($queryBuilder, $value));
+                return $expressionFactory->isNotNull($this->getField($field));
         }
 
         throw new \RuntimeException('Unknown comparator: ' . $comparison->getComparator());

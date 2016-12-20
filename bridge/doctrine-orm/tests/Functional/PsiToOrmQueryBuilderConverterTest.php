@@ -78,11 +78,11 @@ class PsiToOrmQueryBuilderConverterTest extends OrmTestCase
                 'a.title NOT LIKE :param0',
             ],
             [
-                Query::comparison('null', 'title', 42),
+                Query::comparison('null', 'title'),
                 'a.title IS NULL',
             ],
             [
-                Query::comparison('not_null', 'title', 42),
+                Query::comparison('not_null', 'title'),
                 'a.title IS NOT NULL',
             ],
             [
