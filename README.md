@@ -17,8 +17,7 @@ retrieved, removed, saved and queried for using a single API.
 
 ## Documentation
 
-You can find out more about this component and others
-[here](https://psiphp.readthedocs.io/en/latest/components/object-agent/docs/index.html).
+See the documentation in [doc/index.rst](https://github.com/psiphp/object-agent/blob/master/docs/index.rst).
 
 ## Installation
 
