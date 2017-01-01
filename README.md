@@ -15,9 +15,10 @@ The Psi Object Agent component provides an abstraction for object managers
 such as Doctrine ORM and Doctrine PHPCR-ODM. It enables objects to be
 retrieved, removed, saved and queried for using a single API.
 
+
 ## Documentation
 
-See the documentation in [doc/index.rst](https://github.com/psiphp/object-agent/blob/master/docs/index.rst).
+Documentation is in progress, there may be documentation in [doc/index.rst](https://github.com/psiphp/object-agent/blob/master/docs/index.rst).
 
 ## Installation
 
