@@ -66,6 +66,18 @@ final class Store
         $collection->removeElement($object);
     }
 
+    public function persist($object)
+    {
+        $classFqn = get_class($object);
+        $collection = $this->getCollection($classFqn);
+
+        if (true === $collection->contains($object)) {
+            return;
+        }
+
+        $collection->add($object);
+    }
+
     public function getOrCreateCollection($classFqn): ArrayCollection
     {
         if (!$this->hasCollection($classFqn)) {

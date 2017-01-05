@@ -90,7 +90,7 @@ class CollectionsAgent implements AgentInterface
      */
     public function persist($object)
     {
-        // do nothing ...
+        $this->store->persist($object);
     }
 
     /**
