@@ -12,6 +12,7 @@ use Psi\Component\ObjectAgent\Exception\BadMethodCallException;
 use Psi\Component\ObjectAgent\Exception\ObjectNotFoundException;
 use Psi\Component\ObjectAgent\Query\Comparison;
 use Psi\Component\ObjectAgent\Query\Query;
+use Psi\Bridge\ObjectAgent\Doctrine\Collections\Store;
 
 class CollectionsAgent implements AgentInterface
 {
@@ -152,6 +153,14 @@ class CollectionsAgent implements AgentInterface
     public function setParent($object, $parent)
     {
         throw BadMethodCallException::setParentNotSupported(__CLASS__);
+    }
+
+    /**
+     * Return the collection store.
+     */
+    public function getStore(): Store
+    {
+        return $this->store;
     }
 
     private function doQuery(Query $query, int $firstResult = null, int $maxResults = null)
