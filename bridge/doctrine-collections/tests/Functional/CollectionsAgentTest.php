@@ -36,6 +36,15 @@ class CollectionsAgentTest extends \PHPUnit_Framework_TestCase
         $this->agent->setParent($page, $parent);
     }
 
+    /**
+     * It should return the underlying store object.
+     */
+    public function testGetStore()
+    {
+        $store = $this->agent->getStore();
+        $this->assertInstanceOf(Store::class, $store);
+    }
+
     private function createPage($title = 'Hello World')
     {
         static $id = 1;
