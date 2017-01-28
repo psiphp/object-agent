@@ -156,6 +156,14 @@ class OrmAgent implements AgentInterface
     /**
      * {@inheritdoc}
      */
+    public function getCanonicalClassFqn(string $classFqn): string
+    {
+        return ClassUtils::getRealClass($classFqn);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setParent($object, $parent)
     {
         throw new \BadMethodCallException(

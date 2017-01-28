@@ -89,6 +89,13 @@ interface AgentInterface
     public function getIdentifier($object);
 
     /**
+     * Return the canonical class FQN.
+     *
+     * In some cases the class FQN may be a proxy (e.g. __PROXY__/Foobar/Entity).
+     */
+    public function getCanonicalClassFqn(string $classFqn): string;
+
+    /**
      * Set the parent object on a given object.
      *
      * If the agent does not represent a hierarchical storage layer, then a
