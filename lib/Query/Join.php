@@ -29,7 +29,17 @@ class Join
      */
     private $alias;
 
-    public function __construct(string $join, string $alias, string $type = self::INNER_JOIN)
+    /**
+     * @var string
+     */
+    private $from;
+
+    /**
+     * @var string
+     */
+    private $condition;
+
+    public function __construct(string $join, string $alias, string $type = self::INNER_JOIN, string $from = null, string $condition = null)
     {
         if (!in_array($type, self::$validTypes)) {
             throw new \InvalidArgumentException(sprintf(
@@ -42,6 +52,13 @@ class Join
         $this->type = $type;
         $this->alias = $alias;
         $this->join = $join;
+        $this->from = $from;
+        $this->condition = $condition;
+    }
+
+    public function getFrom()
+    {
+        return $this->from;
     }
 
     public function getType()
@@ -57,5 +74,10 @@ class Join
     public function getJoin()
     {
         return $this->join;
+    }
+
+    public function getCondition() 
+    {
+        return $this->condition;
     }
 }

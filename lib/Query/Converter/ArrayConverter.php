@@ -69,9 +69,11 @@ class ArrayConverter
                 'type' => Join::INNER_JOIN,
                 'join'=> null,
                 'alias' => null,
+                'from' => null,
+                'condition' => null,
             ], $join, ['join', 'alias']);
 
-            $joinObjects[] = new Join($join['join'], $join['alias'], $join['type']);
+            $joinObjects[] = new Join($join['join'], $join['alias'], $join['type'], $join['from'], $join['condition']);
         }
 
         return $joinObjects;
