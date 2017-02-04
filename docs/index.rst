@@ -46,13 +46,8 @@ Basic usage is as follows:
     $agent->flush();
 
 
-Events
+Agents
 ------
-
-TODO
-
-Bridges
--------
 
 Doctrine ORM
 ~~~~~~~~~~~~

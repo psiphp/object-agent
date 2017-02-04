@@ -154,6 +154,14 @@ class CollectionsAgent implements AgentInterface
         throw BadMethodCallException::setParentNotSupported(__CLASS__);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getCanonicalClassFqn(string $classFqn): string
+    {
+        return $classFqn;
+    }
+
     private function doQuery(Query $query, int $firstResult = null, int $maxResults = null)
     {
         $collection = $this->store->getCollection($query->getClassFqn());

@@ -60,7 +60,7 @@ final class Query
         return new self($classFqn, $query['selects'], $query['joins'], $query['criteria'], $query['orderings'], $query['firstResult'], $query['maxResults']);
     }
 
-    public static function comparison(string $comparator, $value1, $value2): Comparison
+    public static function comparison(string $comparator, $value1, $value2 = null): Comparison
     {
         return new Comparison($comparator, $value1, $value2);
     }

@@ -113,6 +113,14 @@ class EventDispatchingAgent implements AgentInterface
         return $this->agent->setParent($object, $parent);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getCanonicalClassFqn(string $classFqn): string
+    {
+        return $this->agent->getCanonicalClassFqn($classFqn);
+    }
+
     private function dispatch(string $eventName, $object)
     {
         $this->dispatcher->dispatch($eventName, new ObjectEvent($this->agent, $object));
