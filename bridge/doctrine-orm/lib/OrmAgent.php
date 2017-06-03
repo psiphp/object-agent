@@ -212,7 +212,7 @@ class OrmAgent implements AgentInterface
         $idField = reset($identifierFields);
 
         $query = $query->cloneWith([
-            'selects' => ['count(' . PsiToOrmQueryBuilderConverter::FROM_ALIAS . '.' . $idField . ')'],
+            'selects' => ['count(distinct ' . PsiToOrmQueryBuilderConverter::FROM_ALIAS . '.' . $idField . ')'],
             'firstResult' => null,
             'maxResults' => null,
         ]);
